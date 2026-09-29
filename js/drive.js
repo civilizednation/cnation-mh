@@ -185,7 +185,8 @@ function toVolume(file, kind) {
 }
 
 // 작품 폴더에 넣어 두면 대표 이미지로 쓰는 파일 이름
-const COVER_FILE = /^(cover|표지)\.(jpe?g|png|webp|avif)$/i;
+// 작품 폴더 바로 안의 표지 파일
+const COVER_FILE = /^cover\.(jpe?g|png|webp)$/i;
 
 export async function listVolumes(work) {
   const all = await listFolder(work.folderId, work.resourceKey);

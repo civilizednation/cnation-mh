@@ -245,7 +245,7 @@
           <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg></span><div><b>책갈피</b><span>지금 보는 페이지를 책갈피에 저장합니다. 저장되면 아이콘이 채워지고, 다시 누르면 해제됩니다.</span></div></li>
           <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><div><b>책갈피 목록</b><span>이 작품에 저장한 책갈피를 모아 보고, 누르면 그 페이지로 바로 이동합니다. ✕ 로 삭제.</span></div></li>
           <li><span class="legend-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><div><b>페이지 목록</b><span>이 권의 모든 페이지를 작은 그림으로 보여 줍니다. 원하는 페이지를 누르면 바로 이동합니다.</span></div></li>
-          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></span><div><b>보기 설정</b><span>보기 방식·읽기 방향·화면 맞춤·화질을 바로 바꿉니다. 보고 있는 장면을 작품 대표 이미지(표지)로 지정할 수도 있습니다.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></span><div><b>보기 설정</b><span>보기 방식·읽기 방향·화면 맞춤·화질을 바로 바꾸고, 저장 공간을 정리합니다.</span></div></li>
           <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></span><div><b>전체 화면</b><span>태블릿·PC처럼 화면이 넓을 때만 보입니다. 휴대폰은 홈 화면에 추가해서 실행하면 전체 화면으로 열립니다.</span></div></li>
         </ul>
       </section>
@@ -409,18 +409,6 @@
       <div class="segmented" data-setting="coverAlone">
         <button type="button" data-value="true">첫 장 따로 보기</button>
         <button type="button" data-value="false">첫 장부터 짝 맞추기</button>
-      </div>
-    </div>
-    <div class="setting-group">
-      <h3>작품 대표 이미지</h3>
-      <div class="key-actions">
-        <button class="text-btn" id="cover-use" type="button">지금 장면을 대표 이미지로</button>
-        <button class="text-btn" id="cover-reset" type="button" hidden>지정 해제</button>
-      </div>
-      <div class="cover-spec" id="cover-spec" hidden>
-        <p class="setting-hint">이 기기에 바로 적용됩니다. 모든 기기에 고정하려면 아래 값을 <code>data/library.json</code> 의 이 작품 항목에 넣으세요.</p>
-        <code id="cover-spec-code"></code>
-        <button class="text-btn" id="cover-copy" type="button">복사</button>
       </div>
     </div>
     <div class="setting-group">

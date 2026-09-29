@@ -1,11 +1,11 @@
 // 화면 전환(서재 → 권 선택 → 뷰어), 책갈피 목록, 설정, 사용법, 변경 이력, API 키 설정
 
 import * as store from "./store.js";
-import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnailUrl, collator } from "./drive.js";
+import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnailUrl } from "./drive.js";
 import { Reader, MODE_HINTS } from "./reader.js";
 import * as pageCache from "./cache.js";
 import { APP_VERSION, APP_AUTHOR, APP_EMAIL, HISTORY } from "./version.js";
-import { configKey, resolveConfigCover } from "./covers.js";
+import { resolveAutoCover } from "./covers.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -69,12 +69,9 @@ function readerHash(workId, volumeId, pos = {}) {
   return `#/r/${encodeURIComponent(workId)}/${encodeURIComponent(volumeId)}${query}`;
 }
 
-// 대표 이미지 우선순위: 이 기기에서 지정 > library.json 지정 > 폴더의 cover 파일 > 1권 첫 장
+// 대표 이미지: 작품 폴더의 cover.jpg/png/webp > 1권 첫 장
 function coverSource(work) {
-  const picked = store.pickCover(work.id, configKey(work));
-  if (picked && (picked.slot === "user" || picked.slot === "config")) return picked;
-  if (work.cover?.id) return { url: thumbnailUrl(work.cover.id, work.cover.resourceKey, 400) };
-  return picked;
+  return store.pickCover(work.id);
 }
 
 function coverElement(work, className = "cover") {
@@ -99,15 +96,14 @@ function refreshCovers(work) {
   });
 }
 
-// library.json 에 권·쪽으로 지정한 대표 이미지는 처음 한 번 만들어 기기에 저장
+// 표지가 아직 없는 작품은 권 목록을 불러와 폴더의 cover 파일을 찾고, 없으면 1권 첫 장으로 만들어 기기에 저장
 const pendingCovers = new Set();
-async function ensureConfigCover(work) {
-  if (!configKey(work) || pendingCovers.has(work.id)) return;
-  if (store.getCoverSlots(work.id).config?.key === configKey(work)) return;
+async function ensureCover(work) {
+  if (pendingCovers.has(work.id) || store.pickCover(work.id)) return;
   pendingCovers.add(work.id);
   try {
     const volumes = await getVolumes(work);
-    if (await resolveConfigCover(work, volumes)) refreshCovers(work);
+    if (store.pickCover(work.id) || (await resolveAutoCover(work, volumes))) refreshCovers(work);
   } catch (error) {
     console.warn("대표 이미지를 만들지 못했습니다", work.id, error);
   } finally {
@@ -124,33 +120,16 @@ function getVolumes(work, { force = false } = {}) {
     ? Promise.resolve(cached)
     : listVolumes(work).then(({ volumes, cover }) => {
         store.setCachedVolumes(work.id, volumes);
-        // 작품 폴더의 cover.jpg
+        // 작품 폴더 바로 안의 cover.jpg / cover.png / cover.webp
+        const before = store.getCoverSlots(work.id).folder?.url;
         if (cover) store.setCoverSlot(work.id, "folder", { url: thumbnailUrl(cover.id, cover.resourceKey, 400) });
         else store.clearCoverSlot(work.id, "folder");
+        if (store.getCoverSlots(work.id).folder?.url !== before) refreshCovers(work);
         return volumes;
       });
   promise.catch(() => state.volumes.delete(work.id));
   state.volumes.set(work.id, promise);
   return promise;
-}
-
-// 지정된 대표 이미지가 없는 이미지 폴더 작품은 1권 첫 장을 기억
-async function ensureCover(work, volumes) {
-  if (work.cover || store.getCoverSlots(work.id).auto) return;
-  const first = volumes.find((v) => v.kind === "folder");
-  if (!first || first !== volumes[0]) return;
-  try {
-    const files = await listFolder(first.id, first.resourceKey);
-    const image = files
-      .filter((f) => f.mimeType?.startsWith("image/"))
-      .sort((a, b) => collator.compare(a.name, b.name))[0];
-    if (image) {
-      store.setCoverSlot(work.id, "auto", { url: thumbnailUrl(image.id, image.resourceKey, 400) });
-      refreshCovers(work);
-    }
-  } catch {
-    // 표지는 없어도 됨
-  }
 }
 
 /* 서재 */
@@ -191,7 +170,7 @@ function renderLibrary() {
     );
   }
 
-  state.library.works.forEach((work) => ensureConfigCover(work));
+  state.library.works.forEach((work) => ensureCover(work));
   $("#work-grid").replaceChildren(
     ...state.library.works.map((work) => {
       const { last } = store.getWorkProgress(work.id);
@@ -314,8 +293,7 @@ async function renderWork(workId, { force = false } = {}) {
     }),
   );
 
-  ensureCover(work, volumes);
-  ensureConfigCover(work);
+  ensureCover(work);
 }
 
 /* 책갈피 목록 */

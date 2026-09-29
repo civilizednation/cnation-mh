@@ -197,14 +197,13 @@ export function removeBookmark(workId, key) {
 }
 
 /* 표지(대표 이미지)
- * 저장 형태: { [workId]: { user?, config?, folder?, auto? } }  각 값은 { url, position?, key? }
- *   user   이 기기에서 "지금 장면을 대표 이미지로" 지정한 것
- *   config library.json 의 cover(권·쪽) 로 만든 이미지 (key 가 바뀌면 다시 만듦)
- *   folder 작품 폴더의 cover.jpg
+ * 저장 형태: { [workId]: { folder?, auto? } }  각 값은 { url, position? }
+ *   folder 작품 폴더 바로 안의 cover.jpg / cover.png / cover.webp
  *   auto   1권 첫 장
+ * (예전 버전의 user / config 값은 남아 있어도 쓰지 않음)
  */
 
-const COVER_ORDER = ["user", "config", "folder", "auto"];
+const COVER_ORDER = ["folder", "auto"];
 
 function allCovers() {
   const raw = load(KEYS.covers, {});
@@ -232,14 +231,10 @@ export function clearCoverSlot(workId, slot) {
   save(KEYS.covers, all);
 }
 
-// configKey: library.json 의 cover 지정값(문자열). 다르면 config 슬롯은 무시
-export function pickCover(workId, configKey) {
+export function pickCover(workId) {
   const slots = getCoverSlots(workId);
   for (const slot of COVER_ORDER) {
-    const value = slots[slot];
-    if (!value) continue;
-    if (slot === "config" && value.key !== configKey) continue;
-    return { slot, ...value };
+    if (slots[slot]) return { slot, ...slots[slot] };
   }
   return null;
 }

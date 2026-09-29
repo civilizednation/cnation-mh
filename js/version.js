@@ -11,6 +11,15 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.2",
+    date: "2026-09-29",
+    title: "작품 표지 규칙 단순화",
+    changes: [
+      "작품 표지는 Google Drive 작품 폴더 바로 안의 cover.jpg / cover.png / cover.webp 파일을 사용하고, 없으면 1권 첫 장을 사용",
+      "보기 설정의 '지금 장면을 대표 이미지로' 기능 삭제",
+    ],
+  },
+  {
     version: "1.0.1",
     date: "2026-09-29",
     title: "사용법 안내 추가",
