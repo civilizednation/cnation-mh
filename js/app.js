@@ -157,7 +157,8 @@ function renderLibrary() {
   showScreen("library-screen");
   document.title = "CNATION 만화";
 
-  const recent = store.recentWorks().filter((r) => state.works.has(r.workId)).slice(0, 3);
+  // 한 작품을 끝까지 이어 보는 경우가 많아 가장 최근 작품 하나만 표시
+  const recent = store.recentWorks().filter((r) => state.works.has(r.workId)).slice(0, 1);
   const panel = $("#continue-panel");
   panel.replaceChildren();
   if (recent.length) {
