@@ -31,6 +31,7 @@
         </span>
       </div>
       <div class="topbar-actions">
+        <a class="help-btn" href="#/help">사용법</a>
         <button class="icon-btn" id="library-settings" type="button" aria-label="설정" title="설정">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
         </button>
@@ -197,6 +198,110 @@
       </div>
 
       <p class="settings-foot"><a href="#/setup">Google Drive 연결 상태</a></p>
+    </main>
+  </section>
+
+  <!-- 사용법 -->
+  <section class="screen" id="help-screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="help-back" type="button" aria-label="뒤로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="topbar-title">사용법</h1>
+    </header>
+    <main class="page-body narrow help">
+      <section class="help-card">
+        <h2>1. 읽는 순서</h2>
+        <ol class="help-flow">
+          <li><b>서재</b>에서 작품 표지를 누릅니다.</li>
+          <li><b>권 목록</b>에서 읽을 권을 누릅니다. (읽던 권은 ● 표시와 진행 막대, 다 읽은 권은 '완독' 표시)</li>
+          <li><b>만화 보기 화면</b>이 열립니다. 마지막으로 보던 곳이 있으면 거기서부터 이어서 열립니다.</li>
+        </ol>
+        <p class="help-note">서재 맨 위의 <b>이어 보기</b> 카드를 누르면 가장 최근에 읽던 페이지로 바로 들어갑니다.</p>
+      </section>
+
+      <section class="help-card">
+        <h2>2. 페이지 넘기기</h2>
+        <div class="tap-zones" aria-hidden="true">
+          <div class="tap-zone is-next"><b>다음 페이지</b><small>왼쪽 탭</small></div>
+          <div class="tap-zone is-menu"><b>메뉴 표시/숨김</b><small>가운데 탭</small></div>
+          <div class="tap-zone is-prev"><b>이전 페이지</b><small>오른쪽 탭</small></div>
+        </div>
+        <p class="help-note center">기본 설정(오른쪽 → 왼쪽, 만화 방향) 기준</p>
+        <ul class="help-list">
+          <li><b>화면 왼쪽 탭</b> → 다음 페이지, <b>화면 오른쪽 탭</b> → 이전 페이지 (종이 만화책처럼 왼쪽으로 넘어갑니다)</li>
+          <li><b>스와이프</b>: 손가락을 오른쪽으로 밀면 다음 페이지, 왼쪽으로 밀면 이전 페이지</li>
+          <li><b>화면 가운데 탭</b> → 위·아래 메뉴를 숨기거나 다시 보이게 합니다. 페이지를 넘기면 메뉴는 자동으로 숨겨집니다.</li>
+          <li>설정에서 읽기 방향을 <b>왼쪽 → 오른쪽</b>으로 바꾸면 좌우가 반대로 동작합니다.</li>
+          <li><b>세로 스크롤</b> 보기에서는 위아래로 스크롤해서 읽고, 탭하면 메뉴만 표시/숨김됩니다.</li>
+          <li><b>확대</b>: 두 손가락으로 벌리면 확대됩니다. 확대한 상태에서는 페이지가 넘어가지 않으니, 원래 크기로 줄인 뒤 넘기세요.</li>
+        </ul>
+      </section>
+
+      <section class="help-card">
+        <h2>3. 위쪽 아이콘 (만화 보기 화면)</h2>
+        <ul class="icon-legend">
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg></span><div><b>뒤로</b><span>권 목록으로 돌아갑니다. 옆에 작품 제목과 권 번호가 표시됩니다.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg></span><div><b>책갈피</b><span>지금 보는 페이지를 책갈피에 저장합니다. 저장되면 아이콘이 채워지고, 다시 누르면 해제됩니다.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><div><b>책갈피 목록</b><span>이 작품에 저장한 책갈피를 모아 보고, 누르면 그 페이지로 바로 이동합니다. ✕ 로 삭제.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><div><b>페이지 목록</b><span>이 권의 모든 페이지를 작은 그림으로 보여 줍니다. 원하는 페이지를 누르면 바로 이동합니다.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg></span><div><b>보기 설정</b><span>보기 방식·읽기 방향·화면 맞춤·화질을 바로 바꿉니다. 보고 있는 장면을 작품 대표 이미지(표지)로 지정할 수도 있습니다.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg></span><div><b>전체 화면</b><span>태블릿·PC처럼 화면이 넓을 때만 보입니다. 휴대폰은 홈 화면에 추가해서 실행하면 전체 화면으로 열립니다.</span></div></li>
+        </ul>
+      </section>
+
+      <section class="help-card">
+        <h2>4. 아래쪽 막대 (만화 보기 화면)</h2>
+        <ul class="help-list">
+          <li><b>이전 권 / 다음 권</b> 버튼으로 바로 옆 권으로 이동합니다.</li>
+          <li>가운데 <b>슬라이더</b>를 끌어서 원하는 페이지로 빠르게 이동합니다. 만화 방향일 때는 슬라이더도 <b>오른쪽이 첫 페이지</b>입니다.</li>
+          <li>아래 숫자는 <b>현재 페이지 / 전체 페이지</b>입니다. 반쪽 보기에서는 지금 보는 쪽(오른쪽·왼쪽)도 함께 표시됩니다. (예: 8 / 118 · 왼쪽)</li>
+          <li>권의 마지막 페이지에서 한 번 더 넘기면 <b>'다 읽었습니다'</b> 창이 뜨고, 다음 권으로 바로 넘어갈 수 있습니다.</li>
+        </ul>
+      </section>
+
+      <section class="help-card">
+        <h2>5. 보기 방식</h2>
+        <ul class="help-list">
+          <li><b>한 페이지</b>: 이미지 한 장씩 화면에 맞춰 봅니다.</li>
+          <li><b>두 페이지</b>: 두 장을 나란히 펼쳐 봅니다. 가로로 든 태블릿·PC에 알맞습니다.</li>
+          <li><b>반쪽 보기</b>: 두 쪽이 한 장으로 스캔된 이미지를 반으로 잘라 한 쪽씩 보여 줍니다. 세로로 든 휴대폰에 알맞습니다. (기본값)</li>
+          <li><b>세로 스크롤</b>: 모든 페이지를 위아래로 이어서 봅니다.</li>
+        </ul>
+        <p class="help-note">서재 오른쪽 위 <b>톱니바퀴(설정)</b>에서 만화를 열기 전에 미리 정해 둘 수 있고, 보는 중에는 위쪽 보기 설정 아이콘으로 바꿀 수 있습니다.</p>
+      </section>
+
+      <section class="help-card">
+        <h2>6. 서재·권 목록 화면</h2>
+        <ul class="icon-legend">
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg></span><div><b>책갈피 목록</b><span>권 목록 화면 오른쪽 위. 이 작품의 책갈피를 모아 봅니다.</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg></span><div><b>새로고침</b><span>권 목록 화면 오른쪽 위. Google Drive에 새 권을 올렸을 때 목록을 바로 다시 불러옵니다. (목록은 12시간마다 자동 갱신)</span></div></li>
+          <li><span class="legend-icon"><svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg></span><div><b>설정</b><span>서재 오른쪽 위. 제작자 정보와 보기 설정, 저장 공간 관리.</span></div></li>
+        </ul>
+      </section>
+
+      <section class="help-card">
+        <h2>7. 키보드 (PC·태블릿 키보드)</h2>
+        <dl class="key-table">
+          <div><dt><kbd>←</kbd> <kbd>→</kbd></dt><dd>화면 왼쪽 / 오른쪽 페이지로 이동</dd></div>
+          <div><dt><kbd>Space</kbd></dt><dd>다음 페이지 (<kbd>Shift</kbd>+<kbd>Space</kbd> 이전 페이지)</dd></div>
+          <div><dt><kbd>Home</kbd> <kbd>End</kbd></dt><dd>첫 페이지 / 마지막 페이지</dd></div>
+          <div><dt><kbd>1</kbd>~<kbd>4</kbd></dt><dd>보기 방식 (한 페이지·두 페이지·반쪽·세로 스크롤)</dd></div>
+          <div><dt><kbd>B</kbd></dt><dd>책갈피 저장/해제</dd></div>
+          <div><dt><kbd>T</kbd></dt><dd>페이지 목록</dd></div>
+          <div><dt><kbd>F</kbd></dt><dd>전체 화면</dd></div>
+          <div><dt><kbd>H</kbd></dt><dd>메뉴 표시/숨김</dd></div>
+        </dl>
+      </section>
+
+      <section class="help-card">
+        <h2>8. 알아 두면 좋은 점</h2>
+        <ul class="help-list">
+          <li><b>홈 화면에 추가</b>하면 앱처럼 전체 화면으로 열립니다. 아이폰은 Safari 공유 버튼 → '홈 화면에 추가', 안드로이드는 Chrome 메뉴(⋮) → '홈 화면에 추가'.</li>
+          <li>이어 보기 위치와 책갈피는 <b>기기(브라우저)마다 따로</b> 저장됩니다. 다른 휴대폰·PC에서는 처음부터 보입니다.</li>
+          <li>한 번 본 페이지는 기기에 저장되어 다시 열 때 빨리 뜹니다. 공간이 부족하면 설정 → 저장 공간에서 지울 수 있습니다.</li>
+        </ul>
+      </section>
     </main>
   </section>
 

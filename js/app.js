@@ -1,4 +1,4 @@
-// 화면 전환(서재 → 권 선택 → 뷰어), 책갈피 목록, 설정, 변경 이력, API 키 설정
+// 화면 전환(서재 → 권 선택 → 뷰어), 책갈피 목록, 설정, 사용법, 변경 이력, API 키 설정
 
 import * as store from "./store.js";
 import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnailUrl, collator } from "./drive.js";
@@ -391,6 +391,14 @@ function renderSettings() {
   syncAppSettings();
 }
 
+/* 사용법 */
+
+function renderHelp() {
+  showScreen("help-screen");
+  document.title = "사용법 · cnation 만화책";
+  window.scrollTo(0, 0);
+}
+
 /* 변경 이력 */
 
 function renderHistory() {
@@ -496,6 +504,7 @@ function route() {
   if (parts[0] === "setup") return renderSetup();
   if (parts[0] === "settings") return renderSettings();
   if (parts[0] === "history") return renderHistory();
+  if (parts[0] === "help") return renderHelp();
   if (!hasAuth()) return renderSetup(getAuthProblem() || "Google Drive 연결 정보가 없습니다.");
   switch (parts[0]) {
     case "w":
@@ -519,6 +528,10 @@ function bindGlobalEvents() {
 
   $("#library-settings").addEventListener("click", () => (location.hash = "#/settings"));
   $("#settings-back").addEventListener("click", () => (location.hash = "#/"));
+  $("#help-back").addEventListener("click", () => {
+    if (history.length > 1) history.back();
+    else location.hash = "#/";
+  });
   $("#history-back").addEventListener("click", () => {
     if (history.length > 1) history.back();
     else location.hash = "#/";

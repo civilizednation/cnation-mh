@@ -1144,7 +1144,6 @@ dialog.sheet::backdrop {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
-  margin-left: 10px;
   font-size: 11px;
   color: var(--muted);
   white-space: nowrap;
@@ -1156,9 +1155,9 @@ dialog.sheet::backdrop {
   text-underline-offset: 2px;
 }
 
-@media (max-width: 380px) {
+@media (max-width: 600px) {
+  /* 휴대폰: 버전 줄은 제목 아래 줄에 */
   .brand-version {
-    margin-left: 0;
     flex-basis: 100%;
   }
 }
@@ -1277,4 +1276,186 @@ dialog.sheet::backdrop {
 
 .history-item li + li {
   margin-top: 4px;
+}
+
+/* 서재 상단: 사용법 버튼 */
+
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 10px;
+  margin-right: 4px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.help-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 사용법 화면 */
+
+.help {
+  display: grid;
+  gap: 14px;
+}
+
+.help-card {
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.help-card h2 {
+  margin: 0 0 10px;
+  font-size: 17px;
+}
+
+.help-flow,
+.help-list {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.65;
+  font-size: 14px;
+  color: #d6d7dc;
+}
+
+.help-flow li + li,
+.help-list li + li {
+  margin-top: 6px;
+}
+
+.help-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.help-note.center {
+  margin: 6px 0 12px;
+  text-align: center;
+}
+
+.tap-zones {
+  display: grid;
+  grid-template-columns: 3fr 4fr 3fr;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.tap-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.tap-zone small {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.tap-zone.is-next {
+  background: rgba(229, 57, 53, 0.22);
+}
+
+.tap-zone.is-menu {
+  background: var(--surface-2);
+}
+
+.tap-zone.is-prev {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.icon-legend {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.icon-legend li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.legend-icon {
+  flex: 0 0 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--surface-2);
+}
+
+.legend-icon svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon-legend div {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.icon-legend div span {
+  color: #c9cad0;
+}
+
+.key-table {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.key-table div {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.key-table dt {
+  flex: 0 0 96px;
+}
+
+.key-table dd {
+  margin: 0;
+  color: #d6d7dc;
+  line-height: 1.5;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 22px;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  background: var(--surface-2);
+  font: 600 12px/1.5 inherit;
+  text-align: center;
 }
