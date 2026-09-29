@@ -184,8 +184,13 @@ function toVolume(file, kind) {
   };
 }
 
+// 작품 폴더에 넣어 두면 대표 이미지로 쓰는 파일 이름
+const COVER_FILE = /^(cover|표지)\.(jpe?g|png|webp|avif)$/i;
+
 export async function listVolumes(work) {
-  const files = await listFolder(work.folderId, work.resourceKey);
+  const all = await listFolder(work.folderId, work.resourceKey);
+  const coverFile = all.find((file) => COVER_FILE.test(file.name));
+  const files = all.filter((file) => file !== coverFile);
   const volumes = [];
   for (const file of files) {
     if (isFolder(file)) volumes.push(toVolume(file, "folder"));
@@ -207,7 +212,8 @@ export async function listVolumes(work) {
     if (a.number !== null && b.number !== null && a.number !== b.number) return a.number - b.number;
     return collator.compare(a.name, b.name);
   });
-  return volumes;
+  const cover = coverFile ? { id: coverFile.id, resourceKey: coverFile.resourceKey || "" } : null;
+  return { volumes, cover };
 }
 
 /* 이미지 주소 */

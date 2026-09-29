@@ -985,6 +985,28 @@ dialog.sheet::backdrop {
   color: var(--muted);
 }
 
+.cover-spec {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cover-spec code {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font-size: 13px;
+  user-select: all;
+  -webkit-user-select: all;
+  word-break: break-all;
+}
+
+.cover-spec .text-btn {
+  justify-self: start;
+}
+
 .toc {
   width: min(900px, calc(100% - 24px));
 }

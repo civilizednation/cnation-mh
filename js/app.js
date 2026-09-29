@@ -3,6 +3,7 @@
 import * as store from "./store.js";
 import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnailUrl, collator } from "./drive.js";
 import { Reader } from "./reader.js";
+import { configKey, resolveConfigCover } from "./covers.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -66,25 +67,50 @@ function readerHash(workId, volumeId, pos = {}) {
   return `#/r/${encodeURIComponent(workId)}/${encodeURIComponent(volumeId)}${query}`;
 }
 
+// 대표 이미지 우선순위: 이 기기에서 지정 > library.json 지정 > 폴더의 cover 파일 > 1권 첫 장
 function coverSource(work) {
-  const cached = store.getCachedCover(work.id);
-  if (cached) return cached;
-  if (work.cover?.id) return thumbnailUrl(work.cover.id, work.cover.resourceKey, 400);
-  return "";
+  const picked = store.pickCover(work.id, configKey(work));
+  if (picked && (picked.slot === "user" || picked.slot === "config")) return picked;
+  if (work.cover?.id) return { url: thumbnailUrl(work.cover.id, work.cover.resourceKey, 400) };
+  return picked;
 }
 
 function coverElement(work, className = "cover") {
-  const src = coverSource(work);
-  const el = h("div", { class: className, style: `--work-color: ${work.color || "#455a64"}` });
+  const cover = coverSource(work);
+  const el = h("div", { class: className, style: `--work-color: ${work.color || "#455a64"}`, "data-cover-work": work.id });
   const fallback = h("div", { class: "cover-fallback" }, h("span", {}, work.title), work.subtitle ? h("small", {}, work.subtitle) : null);
   el.append(fallback);
-  if (src) {
-    const img = h("img", { src, alt: "", loading: "lazy", draggable: "false" });
+  if (cover?.url) {
+    const img = h("img", { src: cover.url, alt: "", loading: "lazy", draggable: "false" });
+    if (cover.position) img.style.objectPosition = cover.position;
     img.addEventListener("load", () => el.classList.add("has-image"));
     img.addEventListener("error", () => img.remove());
     el.append(img);
   }
   return el;
+}
+
+// 화면에 있는 이 작품의 표지를 모두 새로 그리기
+function refreshCovers(work) {
+  document.querySelectorAll(`[data-cover-work="${CSS.escape(work.id)}"]`).forEach((el) => {
+    el.replaceWith(coverElement(work, el.className.replace(/\s*has-image/, "")));
+  });
+}
+
+// library.json 에 권·쪽으로 지정한 대표 이미지는 처음 한 번 만들어 기기에 저장
+const pendingCovers = new Set();
+async function ensureConfigCover(work) {
+  if (!configKey(work) || pendingCovers.has(work.id)) return;
+  if (store.getCoverSlots(work.id).config?.key === configKey(work)) return;
+  pendingCovers.add(work.id);
+  try {
+    const volumes = await getVolumes(work);
+    if (await resolveConfigCover(work, volumes)) refreshCovers(work);
+  } catch (error) {
+    console.warn("대표 이미지를 만들지 못했습니다", work.id, error);
+  } finally {
+    pendingCovers.delete(work.id);
+  }
 }
 
 /* 권 목록 불러오기 */
@@ -94,8 +120,11 @@ function getVolumes(work, { force = false } = {}) {
   const cached = !force && store.getCachedVolumes(work.id);
   const promise = cached
     ? Promise.resolve(cached)
-    : listVolumes(work).then((volumes) => {
+    : listVolumes(work).then(({ volumes, cover }) => {
         store.setCachedVolumes(work.id, volumes);
+        // 작품 폴더의 cover.jpg
+        if (cover) store.setCoverSlot(work.id, "folder", { url: thumbnailUrl(cover.id, cover.resourceKey, 400) });
+        else store.clearCoverSlot(work.id, "folder");
         return volumes;
       });
   promise.catch(() => state.volumes.delete(work.id));
@@ -103,9 +132,9 @@ function getVolumes(work, { force = false } = {}) {
   return promise;
 }
 
-// 표지가 없는 이미지 폴더 작품은 첫 권 첫 장을 표지로 기억
+// 지정된 대표 이미지가 없는 이미지 폴더 작품은 1권 첫 장을 기억
 async function ensureCover(work, volumes) {
-  if (work.cover || store.getCachedCover(work.id)) return;
+  if (work.cover || store.getCoverSlots(work.id).auto) return;
   const first = volumes.find((v) => v.kind === "folder");
   if (!first || first !== volumes[0]) return;
   try {
@@ -114,9 +143,8 @@ async function ensureCover(work, volumes) {
       .filter((f) => f.mimeType?.startsWith("image/"))
       .sort((a, b) => collator.compare(a.name, b.name))[0];
     if (image) {
-      store.setCachedCover(work.id, thumbnailUrl(image.id, image.resourceKey, 400));
-      const hero = document.querySelector("#work-hero .cover");
-      if (hero && !hero.querySelector("img")) hero.replaceWith(coverElement(work));
+      store.setCoverSlot(work.id, "auto", { url: thumbnailUrl(image.id, image.resourceKey, 400) });
+      refreshCovers(work);
     }
   } catch {
     // 표지는 없어도 됨
@@ -160,6 +188,7 @@ function renderLibrary() {
     );
   }
 
+  state.library.works.forEach((work) => ensureConfigCover(work));
   $("#work-grid").replaceChildren(
     ...state.library.works.map((work) => {
       const { last } = store.getWorkProgress(work.id);
@@ -283,6 +312,7 @@ async function renderWork(workId, { force = false } = {}) {
   );
 
   ensureCover(work, volumes);
+  ensureConfigCover(work);
 }
 
 /* 책갈피 목록 */
