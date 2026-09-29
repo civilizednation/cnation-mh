@@ -14,7 +14,7 @@ const KEYS = {
 const VOLUME_CACHE_TTL = 12 * 60 * 60 * 1000;
 
 export const DEFAULT_SETTINGS = {
-  mode: "single", // single | double | split | scroll
+  mode: "split", // single | double | split | scroll — 휴대폰·태블릿 세로 화면 기준 기본값은 반쪽 보기
   direction: "rtl", // rtl(오른쪽→왼쪽, 만화 원작) | ltr
   fit: "contain", // contain(화면 맞춤) | width(너비 맞춤)
   quality: "high", // normal | high | original
