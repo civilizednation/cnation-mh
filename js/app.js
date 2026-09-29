@@ -1,7 +1,7 @@
 // 화면 전환(서재 → 권 선택 → 뷰어), 책갈피 목록, API 키 설정
 
 import * as store from "./store.js";
-import { resolveApiKey, hasApiKey, listVolumes, listFolder, thumbnailUrl, collator } from "./drive.js";
+import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnailUrl, collator } from "./drive.js";
 import { Reader } from "./reader.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -334,13 +334,15 @@ function openBookmarks(work) {
   dialog.showModal();
 }
 
-/* API 키 설정 */
+/* Drive 연결 설정 */
 
 function renderSetup(message = "") {
   showScreen("setup-screen");
   document.title = "Drive 연결 설정 · CNATION 만화";
   $("#key-input").value = store.getStoredApiKey();
-  $("#key-note").textContent = message;
+  $("#setup-problem").textContent = message;
+  $("#setup-problem").hidden = !message;
+  $("#key-note").textContent = "";
 }
 
 /* 뷰어 */
@@ -412,7 +414,7 @@ function route() {
   const { parts, params } = parseHash();
   if (parts[0] !== "r" && reader.active) reader.close();
   if (parts[0] === "setup") return renderSetup();
-  if (!hasApiKey()) return renderSetup("먼저 Google Drive API 키를 설정해 주세요.");
+  if (!hasAuth()) return renderSetup(getAuthProblem() || "Google Drive 연결 정보가 없습니다.");
   switch (parts[0]) {
     case "w":
       return renderWork(parts[1]);
@@ -434,6 +436,12 @@ function bindGlobalEvents() {
   });
 
   $("#library-settings").addEventListener("click", () => (location.hash = "#/setup"));
+  $("#setup-retry").addEventListener("click", async () => {
+    await resolveAuth();
+    state.volumes.clear();
+    if (hasAuth()) location.hash = "#/";
+    else renderSetup(getAuthProblem() || "아직 연결되지 않았습니다.");
+  });
   $("#setup-back").addEventListener("click", () => (location.hash = "#/"));
   $("#work-back").addEventListener("click", () => (location.hash = "#/"));
   $("#work-refresh").addEventListener("click", () => {
@@ -451,9 +459,9 @@ function bindGlobalEvents() {
     event.preventDefault();
     const value = $("#key-input").value.trim();
     store.setStoredApiKey(value);
-    await resolveApiKey();
+    await resolveAuth();
     state.volumes.clear();
-    if (!hasApiKey()) {
+    if (!hasAuth()) {
       $("#key-note").textContent = "키가 비어 있습니다.";
       return;
     }
@@ -470,9 +478,9 @@ function bindGlobalEvents() {
   $("#key-clear").addEventListener("click", async () => {
     store.setStoredApiKey("");
     $("#key-input").value = "";
-    await resolveApiKey();
+    await resolveAuth();
     state.volumes.clear();
-    $("#key-note").textContent = hasApiKey() ? "이 기기에 저장한 키를 지웠습니다. (배포 설정의 키를 사용합니다)" : "이 기기에 저장한 키를 지웠습니다.";
+    $("#key-note").textContent = hasAuth() ? "이 기기에 저장한 키를 지웠습니다. (서버의 Drive 연결을 사용합니다)" : "이 기기에 저장한 키를 지웠습니다.";
   });
 
   window.addEventListener("hashchange", route);
@@ -496,7 +504,7 @@ async function init() {
     return;
   }
   state.library.works.forEach((work) => state.works.set(work.id, work));
-  await resolveApiKey();
+  await resolveAuth();
   bindGlobalEvents();
   route();
 }

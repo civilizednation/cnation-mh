@@ -2,6 +2,7 @@
 
 import { getStoredApiKey } from "./store.js";
 import { ZipReader } from "./zip.js";
+import * as pageCache from "./cache.js";
 
 const API = "https://www.googleapis.com/drive/v3";
 const IMAGE_EXT = /\.(jpe?g|png|gif|webp|bmp|avif)$/i;
@@ -11,30 +12,77 @@ const FOLDER_MIME = "application/vnd.google-apps.folder";
 
 export const collator = new Intl.Collator("ko", { numeric: true, sensitivity: "base" });
 
-/* API 키 */
+/* 인증
+ * - 배포(Vercel): /api/token 이 서비스 계정으로 1시간짜리 읽기 전용 토큰을 발급
+ *   → 브라우저는 그 토큰으로 Google Drive 에서 직접 받음 (비밀 키는 서버에만 있음)
+ * - 로컬 테스트: config.js 나 설정 화면에 넣은 API 키를 사용
+ */
 
-let apiKey = "";
+let auth = { mode: "none" }; // { mode: "token", token, expiresAt } | { mode: "key", key }
+let authProblem = "";
+let tokenPromise = null;
 
-export async function resolveApiKey() {
-  const stored = getStoredApiKey();
-  if (stored) return (apiKey = stored);
-  const fromFile = window.CNATION_CONFIG?.googleApiKey;
-  if (fromFile) return (apiKey = fromFile);
+async function requestToken() {
+  const res = await fetch("./api/token", { cache: "no-store" });
+  let json = {};
   try {
-    // Vercel 환경 변수 GOOGLE_API_KEY (api/config.js)
-    const res = await fetch("./api/config", { cache: "no-store" });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.googleApiKey) return (apiKey = json.googleApiKey);
-    }
+    json = await res.json();
   } catch {
-    // 로컬 정적 서버에는 /api/config 가 없음
+    // 정적 서버에는 /api/token 이 없음
   }
-  return (apiKey = "");
+  if (res.ok && json.accessToken) return { mode: "token", token: json.accessToken, expiresAt: json.expiresAt };
+  if (res.ok && json.apiKey) return { mode: "key", key: json.apiKey };
+  throw new Error(json.error || "Google Drive 연결 정보가 없습니다.");
 }
 
-export function hasApiKey() {
-  return Boolean(apiKey);
+export async function resolveAuth() {
+  authProblem = "";
+  const stored = getStoredApiKey();
+  if (stored) return (auth = { mode: "key", key: stored });
+  const fromFile = window.CNATION_CONFIG?.googleApiKey;
+  if (fromFile) return (auth = { mode: "key", key: fromFile });
+  try {
+    auth = await requestToken();
+  } catch (error) {
+    auth = { mode: "none" };
+    authProblem = error.message;
+  }
+  return auth;
+}
+
+export function hasAuth() {
+  return auth.mode !== "none";
+}
+
+export function getAuthProblem() {
+  return authProblem;
+}
+
+async function refreshToken() {
+  if (!tokenPromise) {
+    tokenPromise = requestToken()
+      .then((next) => (auth = next))
+      .finally(() => {
+        tokenPromise = null;
+      });
+  }
+  return tokenPromise;
+}
+
+// Drive API 요청: 인증 붙이기, 토큰 만료 전 갱신, 401 이면 한 번 새 토큰으로 재시도
+async function driveFetch(url, { headers = {}, signal, retried = false } = {}) {
+  if (auth.mode === "none") throw new DriveError("Google Drive 연결이 설정되지 않았습니다.", 0);
+  if (auth.mode === "token" && auth.expiresAt - Date.now() < 5 * 60 * 1000) await refreshToken();
+  const target = new URL(url);
+  const finalHeaders = { ...headers };
+  if (auth.mode === "token") finalHeaders.Authorization = `Bearer ${auth.token}`;
+  else target.searchParams.set("key", auth.key);
+  const res = await fetch(target, { headers: finalHeaders, signal });
+  if (res.status === 401 && auth.mode === "token" && !retried) {
+    await refreshToken();
+    return driveFetch(url, { headers, signal, retried: true });
+  }
+  return res;
 }
 
 /* 공통 */
@@ -67,7 +115,9 @@ async function toDriveError(res) {
   } else if (/downloadQuotaExceeded|quota/i.test(text)) {
     message = "Google Drive 다운로드 한도를 넘었습니다. 잠시 후 다시 시도해 주세요.";
   } else if (res.status === 404 || /notFound/i.test(text)) {
-    message = "Drive 에서 찾을 수 없습니다. 폴더/파일이 '링크가 있는 모든 사용자'로 공유되었는지 확인해 주세요.";
+    message = "Drive 에서 찾을 수 없습니다. 작품 폴더가 서비스 계정 이메일(또는 '링크가 있는 모든 사용자')에 공유되었는지 확인해 주세요.";
+  } else if (res.status === 401) {
+    message = "Google Drive 인증이 만료되었습니다. 앱을 새로고침해 주세요.";
   } else if (raw) {
     message = `${message}: ${raw}`;
   }
@@ -76,10 +126,6 @@ async function toDriveError(res) {
 
 function resourceKeyHeaders(id, resourceKey) {
   return resourceKey ? { "X-Goog-Drive-Resource-Keys": `${id}/${resourceKey}` } : {};
-}
-
-function requireKey() {
-  if (!apiKey) throw new DriveError("Google Drive API 키가 설정되지 않았습니다.", 0);
 }
 
 function isFolder(file) {
@@ -97,7 +143,6 @@ function isArchive(file) {
 /* 폴더 목록 */
 
 export async function listFolder(folderId, resourceKey) {
-  requireKey();
   const files = [];
   let pageToken = "";
   do {
@@ -107,10 +152,9 @@ export async function listFolder(folderId, resourceKey) {
       pageSize: "1000",
       supportsAllDrives: "true",
       includeItemsFromAllDrives: "true",
-      key: apiKey,
     });
     if (pageToken) params.set("pageToken", pageToken);
-    const res = await fetch(`${API}/files?${params}`, { headers: resourceKeyHeaders(folderId, resourceKey) });
+    const res = await driveFetch(`${API}/files?${params}`, { headers: resourceKeyHeaders(folderId, resourceKey) });
     if (!res.ok) throw await toDriveError(res);
     const json = await res.json();
     files.push(...(json.files || []));
@@ -181,12 +225,11 @@ function lh3Url(id, resourceKey) {
 }
 
 function mediaUrl(id) {
-  return `${API}/files/${encodeURIComponent(id)}?alt=media&supportsAllDrives=true&key=${encodeURIComponent(apiKey)}`;
+  return `${API}/files/${encodeURIComponent(id)}?alt=media&supportsAllDrives=true`;
 }
 
 async function fetchMediaBlob(id, resourceKey) {
-  requireKey();
-  const res = await fetch(mediaUrl(id), { headers: resourceKeyHeaders(id, resourceKey) });
+  const res = await driveFetch(mediaUrl(id), { headers: resourceKeyHeaders(id, resourceKey) });
   if (!res.ok) throw await toDriveError(res);
   return res.blob();
 }
@@ -378,6 +421,9 @@ class FolderSource extends BaseSource {
   }
 }
 
+// Range 를 지원하지 않는 응답에서 이보다 큰 파일은 통째로 받지 않음 (휴대폰 메모리 보호)
+const FULL_DOWNLOAD_LIMIT = 80 * 1024 * 1024;
+
 class ZipSource extends BaseSource {
   constructor(volume) {
     super();
@@ -387,21 +433,34 @@ class ZipSource extends BaseSource {
     this.queue = limiter(4);
   }
 
+  get cachePrefix() {
+    return `zip:${this.volume.id}:${this.size}`;
+  }
+
   async open(onStatus) {
-    requireKey();
     this.onStatus = onStatus;
     let size = this.volume.size;
     if (!size) {
-      const params = new URLSearchParams({ fields: "size", supportsAllDrives: "true", key: apiKey });
-      const res = await fetch(`${API}/files/${encodeURIComponent(this.volume.id)}?${params}`, {
+      const params = new URLSearchParams({ fields: "size", supportsAllDrives: "true" });
+      const res = await driveFetch(`${API}/files/${encodeURIComponent(this.volume.id)}?${params}`, {
         headers: resourceKeyHeaders(this.volume.id, this.volume.resourceKey),
       });
       if (!res.ok) throw await toDriveError(res);
       size = Number((await res.json()).size);
     }
     this.size = size;
-    onStatus?.("압축 파일 목록을 읽는 중…");
-    this.zip = await new ZipReader({ size, read: (start, end) => this.read(start, end) }).open();
+
+    this.zip = new ZipReader({ size, read: (start, end) => this.read(start, end) });
+    // 전에 연 적 있는 권은 저장해 둔 목록을 그대로 사용
+    const cachedEntries = await pageCache.getJSON(`${this.cachePrefix}:index`);
+    if (cachedEntries?.length) {
+      this.zip.entries = cachedEntries;
+    } else {
+      onStatus?.("압축 파일 목록을 읽는 중…");
+      await this.zip.open();
+      pageCache.putJSON(`${this.cachePrefix}:index`, this.zip.entries);
+    }
+
     const entries = this.zip.entries
       .filter((entry) => IMAGE_EXT.test(entry.name) && !/(^|\/)(__MACOSX|\.)/.test(entry.name))
       .sort((a, b) => collator.compare(a.name, b.name));
@@ -416,12 +475,16 @@ class ZipSource extends BaseSource {
       await this.fullPromise;
       return this.full.subarray(start, end + 1);
     }
-    const res = await fetch(mediaUrl(this.volume.id), {
+    const res = await driveFetch(mediaUrl(this.volume.id), {
       headers: { ...resourceKeyHeaders(this.volume.id, this.volume.resourceKey), Range: `bytes=${start}-${end}` },
     });
     if (res.status === 206) return new Uint8Array(await res.arrayBuffer());
     if (!res.ok) throw await toDriveError(res);
-    // Range 를 지원하지 않아 전체 파일이 온 경우: 끝까지 받아 두고 이후에는 메모리에서 읽기
+    // Range 를 지원하지 않아 전체 파일이 온 경우
+    if (this.size > FULL_DOWNLOAD_LIMIT) {
+      res.body?.cancel();
+      throw new Error(`이 파일(${Math.round(this.size / 1048576)}MB)은 부분 다운로드를 지원하지 않아 열 수 없습니다.`);
+    }
     this.fullPromise = this.readWhole(res);
     this.full = await this.fullPromise;
     return this.full.subarray(start, end + 1);
@@ -443,14 +506,36 @@ class ZipSource extends BaseSource {
     return buffer.subarray(0, received);
   }
 
+  // 기기 캐시에 있으면 그것을, 없으면 Drive 에서 받아 캐시에 저장
+  async pageBytes(index) {
+    const { entry } = this.pages[index];
+    const key = `${this.cachePrefix}:${entry.localOffset}`;
+    const cached = await pageCache.getBytes(key);
+    if (cached) return cached;
+    const bytes = await this.zip.read(entry);
+    pageCache.putBytes(key, bytes, mimeOf(entry.name));
+    return bytes;
+  }
+
   loadPage(index) {
     const { entry } = this.pages[index];
     return this.queue(async () => {
       if (this.closed) throw new Error("닫힌 권입니다.");
-      const bytes = await this.zip.read(entry);
+      const bytes = await this.pageBytes(index);
       const url = this.makeBlobUrl(new Blob([bytes], { type: mimeOf(entry.name) }));
       return decodeImage(url);
     });
+  }
+
+  // 화면에 띄우지 않고 캐시에만 받아 두기 (다음 권 미리 준비)
+  async prefetch(count) {
+    const total = Math.min(count, this.pages.length);
+    const jobs = [];
+    for (let i = 0; i < total; i += 1) {
+      const key = `${this.cachePrefix}:${this.pages[i].entry.localOffset}`;
+      if (!pageCache.has(key)) jobs.push(this.queue(() => this.pageBytes(i)));
+    }
+    await Promise.allSettled(jobs);
   }
 
   close() {
@@ -463,4 +548,30 @@ export async function openVolume(volume, { quality, onStatus }) {
   const source = volume.kind === "zip" ? new ZipSource(volume) : new FolderSource(volume, quality);
   await source.open(onStatus);
   return source;
+}
+
+// 다음 권의 목록과 앞쪽 몇 페이지를 미리 받아 두기
+export async function prefetchVolume(volume, { quality, pages = 4 } = {}) {
+  if (volume.kind === "zip") {
+    const source = new ZipSource(volume);
+    try {
+      await source.open();
+      await source.prefetch(pages);
+    } finally {
+      source.close();
+    }
+    return;
+  }
+  const source = new FolderSource(volume, quality);
+  await source.open();
+  if (source.delegate) {
+    await source.delegate.prefetch(pages);
+  } else {
+    // 이미지 폴더는 브라우저 HTTP 캐시에 올려 두기
+    const width = QUALITY_WIDTH[quality] || QUALITY_WIDTH.high;
+    source.pages.slice(0, pages).forEach((page) => {
+      new Image().src = thumbnailUrl(page.id, page.resourceKey, width);
+    });
+  }
+  source.close();
 }

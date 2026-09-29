@@ -118,13 +118,20 @@
       <h1 class="topbar-title">Google Drive 연결 설정</h1>
     </header>
     <main class="page-body narrow">
-      <p class="lead">만화 이미지를 Google Drive 에서 불러오려면 <strong>Google Drive API 키</strong>가 필요합니다.</p>
+      <p class="setup-problem" id="setup-problem" hidden></p>
+      <p class="lead">만화는 Google Drive 에서 <strong>서비스 계정</strong>으로 불러옵니다. 비밀 키는 Vercel 서버에만 저장되고 브라우저에는 보이지 않습니다.</p>
       <ol class="steps">
-        <li><a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener">Google Cloud 콘솔</a>에서 프로젝트를 만들고 <b>Google Drive API</b> 를 사용 설정합니다.</li>
-        <li><b>API 및 서비스 → 사용자 인증 정보 → API 키 만들기</b>를 누릅니다.</li>
-        <li>키 제한에서 <b>API 제한: Google Drive API</b>, <b>웹사이트 제한: 이 앱 주소</b>를 지정합니다.</li>
-        <li>Vercel 에서는 환경 변수 <code>GOOGLE_API_KEY</code> 로 넣거나, 아래에 입력하면 이 기기에만 저장됩니다.</li>
+        <li><a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener">Google Cloud 콘솔</a>에서 <b>Google Drive API</b> 를 사용 설정합니다.</li>
+        <li><b>IAM 및 관리자 → 서비스 계정 → 만들기</b> (역할은 주지 않아도 됨)</li>
+        <li>만든 서비스 계정 → <b>키 → 키 추가 → JSON</b> 으로 키 파일을 받습니다.</li>
+        <li>Vercel → Settings → Environment Variables 에 <code>GOOGLE_SERVICE_ACCOUNT</code> 로 키 파일 내용 전체를 넣고 재배포합니다.</li>
+        <li>Google Drive 에서 작품 폴더를 서비스 계정 이메일에 <b>뷰어</b>로 공유합니다.</li>
       </ol>
+      <div class="key-actions">
+        <button class="primary-btn" id="setup-retry" type="button">다시 연결</button>
+      </div>
+      <details class="key-details">
+        <summary>로컬 테스트용: API 키로 연결</summary>
       <form class="key-form" id="key-form">
         <label for="key-input">API 키</label>
         <input id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…">
@@ -134,6 +141,7 @@
         </div>
         <p class="key-note" id="key-note"></p>
       </form>
+      </details>
     </main>
   </section>
 
@@ -192,6 +200,13 @@
       <div class="segmented" data-setting="coverAlone">
         <button type="button" data-value="true">첫 장 따로 보기</button>
         <button type="button" data-value="false">첫 장부터 짝 맞추기</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <h3>저장 공간</h3>
+      <p class="setting-hint" id="cache-usage"></p>
+      <div class="key-actions">
+        <button class="text-btn" id="cache-clear" type="button">저장된 페이지 지우기</button>
       </div>
     </div>
     <div class="setting-group">

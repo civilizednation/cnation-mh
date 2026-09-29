@@ -589,6 +589,25 @@ svg {
   gap: 8px;
 }
 
+.setup-problem {
+  margin: 4px 0 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(229, 57, 53, 0.12);
+  border: 1px solid rgba(229, 57, 53, 0.35);
+  line-height: 1.5;
+}
+
+.key-details {
+  margin-top: 26px;
+}
+
+.key-details summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .key-note {
   margin: 0;
   min-height: 1.4em;
