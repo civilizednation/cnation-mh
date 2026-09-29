@@ -8,7 +8,10 @@
       "resourceKey": "0-iyPAtm8AlJzULx7aKa7feg",
       "direction": "rtl",
       "color": "#c62828",
-      "cover": { "id": "0B_Fq1xsSZuWIUTAzWldYOFZsWFE", "resourceKey": "0-c0q7a7i7Dl__5K5L2tjndg" }
+      "cover": {
+        "volume": 1,
+        "page": 1
+      }
     },
     {
       "id": "dragonball",
@@ -16,7 +19,11 @@
       "subtitle": "01-42 완결",
       "folderId": "16cBxUiOyOAQALRoJ60-0tcZsTAdrgzcH",
       "direction": "rtl",
-      "color": "#ef6c00"
+      "color": "#ef6c00",
+      "cover": {
+        "volume": 1,
+        "page": 1
+      }
     },
     {
       "id": "battle-royale",
@@ -24,14 +31,23 @@
       "subtitle": "01-15 완결",
       "folderId": "19QKkeblNo5ymohzsiSWmiH9drWEOLBCD",
       "direction": "rtl",
-      "color": "#37474f"
+      "color": "#37474f",
+      "cover": {
+        "volume": 1,
+        "page": 2
+      }
     },
     {
       "id": "kungfu-boy",
       "title": "쿵후보이 친미 Legends",
       "folderId": "1D5vW1DXSe4a8umrrEOHqL5Q0AhiKpaAk",
       "direction": "rtl",
-      "color": "#2e7d32"
+      "color": "#2e7d32",
+      "cover": {
+        "volume": 1,
+        "page": 1,
+        "side": "left"
+      }
     },
     {
       "id": "fist-of-the-north-star",
@@ -40,7 +56,11 @@
       "folderId": "0B_Fq1xsSZuWIV0RBa0M2UWh6U1k",
       "resourceKey": "0-ZxI2cTGsZmv1VkQO5ccUfw",
       "direction": "rtl",
-      "color": "#4527a0"
+      "color": "#4527a0",
+      "cover": {
+        "volume": 1,
+        "page": 1
+      }
     }
   ]
 }
