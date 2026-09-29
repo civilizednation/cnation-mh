@@ -155,7 +155,7 @@ async function ensureCover(work, volumes) {
 
 function renderLibrary() {
   showScreen("library-screen");
-  document.title = "CNATION 만화";
+  document.title = "cnation 만화책";
 
   // 한 작품을 끝까지 이어 보는 경우가 많아 가장 최근 작품 하나만 표시
   const recent = store.recentWorks().filter((r) => state.works.has(r.workId)).slice(0, 1);
@@ -220,7 +220,7 @@ async function renderWork(workId, { force = false } = {}) {
     return;
   }
   showScreen("work-screen");
-  document.title = `${work.title} · CNATION 만화`;
+  document.title = `${work.title} · cnation 만화책`;
   $("#work-title").textContent = work.title;
   $("#work-screen").dataset.workId = work.id;
 
@@ -369,7 +369,7 @@ function openBookmarks(work) {
 
 function renderSetup(message = "") {
   showScreen("setup-screen");
-  document.title = "Drive 연결 설정 · CNATION 만화";
+  document.title = "Drive 연결 설정 · cnation 만화책";
   $("#key-input").value = store.getStoredApiKey();
   $("#setup-problem").textContent = message;
   $("#setup-problem").hidden = !message;
@@ -415,7 +415,7 @@ async function renderReader(workId, volumeId, params) {
     location.hash = `#/w/${encodeURIComponent(work.id)}`;
     return;
   }
-  document.title = `${work.title} ${volume.label} · CNATION 만화`;
+  document.title = `${work.title} ${volume.label} · cnation 만화책`;
 
   let start = { page: 0, half: 0 };
   if (params.has("p")) {
