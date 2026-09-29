@@ -111,6 +111,54 @@ async function ensureCover(work) {
   }
 }
 
+// 서재: 화면에 보이는 작품만, 한 번에 몇 개씩 표지 만들기 (작품이 많아도 Drive 요청이 몰리지 않도록)
+const COVER_CONCURRENCY = 3;
+const coverQueue = [];
+let coverRunning = 0;
+
+function queueCover(work) {
+  if (store.pickCover(work.id) || coverQueue.includes(work)) return;
+  coverQueue.push(work);
+  pumpCovers();
+}
+
+function pumpCovers() {
+  while (coverRunning < COVER_CONCURRENCY && coverQueue.length) {
+    const work = coverQueue.shift();
+    coverRunning += 1;
+    ensureCover(work).finally(() => {
+      coverRunning -= 1;
+      pumpCovers();
+    });
+  }
+}
+
+let coverObserver;
+function observeCovers(cards) {
+  coverObserver?.disconnect();
+  coverQueue.length = 0;
+  coverObserver = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        coverObserver.unobserve(entry.target);
+        const work = state.works.get(entry.target.dataset.workId);
+        if (work) queueCover(work);
+      }
+    },
+    { rootMargin: "300px 0px" },
+  );
+  cards.forEach((card) => coverObserver.observe(card));
+}
+
+// 가나다순 (숫자·영문 제목이 먼저)
+const titleCollator = new Intl.Collator("ko", { numeric: true, sensitivity: "base" });
+function compareTitles(a, b) {
+  const groupA = /^[가-힣]/.test(a.title) ? 1 : 0;
+  const groupB = /^[가-힣]/.test(b.title) ? 1 : 0;
+  return groupA - groupB || titleCollator.compare(a.title, b.title);
+}
+
 /* 권 목록 불러오기 */
 
 function getVolumes(work, { force = false } = {}) {
@@ -170,26 +218,25 @@ function renderLibrary() {
     );
   }
 
-  state.library.works.forEach((work) => ensureCover(work));
-  $("#work-grid").replaceChildren(
-    ...state.library.works.map((work) => {
-      const { last } = store.getWorkProgress(work.id);
-      const bookmarks = store.getBookmarks(work.id).length;
-      return h(
-        "a",
-        { class: "work-card", href: `#/w/${encodeURIComponent(work.id)}` },
-        coverElement(work),
-        h(
-          "div",
-          { class: "work-copy" },
-          h("strong", {}, work.title),
-          work.subtitle ? h("small", {}, work.subtitle) : null,
-          h("span", { class: last ? "work-status is-reading" : "work-status" }, last ? positionText(last) : "아직 읽지 않음"),
-          bookmarks ? h("span", { class: "work-bookmarks" }, `책갈피 ${bookmarks}`) : null,
-        ),
-      );
-    }),
-  );
+  const cards = state.library.works.map((work) => {
+    const { last } = store.getWorkProgress(work.id);
+    const bookmarks = store.getBookmarks(work.id).length;
+    return h(
+      "a",
+      { class: "work-card", href: `#/w/${encodeURIComponent(work.id)}`, "data-work-id": work.id },
+      coverElement(work),
+      h(
+        "div",
+        { class: "work-copy" },
+        h("strong", {}, work.title),
+        work.subtitle ? h("small", {}, work.subtitle) : null,
+        h("span", { class: last ? "work-status is-reading" : "work-status" }, last ? positionText(last) : "아직 읽지 않음"),
+        bookmarks ? h("span", { class: "work-bookmarks" }, `책갈피 ${bookmarks}`) : null,
+      ),
+    );
+  });
+  $("#work-grid").replaceChildren(...cards);
+  observeCovers(cards);
 }
 
 /* 작품: 권 선택 */
@@ -611,6 +658,7 @@ async function init() {
     document.body.textContent = error.message;
     return;
   }
+  state.library.works.sort(compareTitles);
   state.library.works.forEach((work) => state.works.set(work.id, work));
   await resolveAuth();
   bindGlobalEvents();
