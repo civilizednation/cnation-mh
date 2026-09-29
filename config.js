@@ -1,7 +1,6 @@
-// Google Drive API 키 설정
-// - Vercel 배포 시에는 여기를 비워 두고, Vercel 환경 변수 GOOGLE_API_KEY 를 설정하면 /api/config 에서 읽어 옵니다.
-// - 로컬에서 바로 테스트하려면 아래에 키를 넣어도 됩니다. (공개 저장소라면 커밋하지 마세요)
-// - 앱 첫 화면의 "API 키 설정"에서 입력하면 이 브라우저에만 저장됩니다.
+// (선택) 로컬 테스트용 Google Drive API 키
+// - 배포(Vercel)에서는 비워 두세요. 서버의 서비스 계정(GOOGLE_SERVICE_ACCOUNT)으로 연결됩니다.
+// - 여기에 키를 넣으면 서비스 계정 대신 이 키를 사용합니다. 저장소에 커밋하지 마세요.
 window.CNATION_CONFIG = {
   googleApiKey: "",
 };

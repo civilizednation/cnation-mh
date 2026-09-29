@@ -1,12 +1,15 @@
-// 로컬 실행용 간단한 서버 (의존성 없음)
-//   GOOGLE_API_KEY=AIza... node scripts/serve.mjs
+// 로컬 실행용 간단한 서버 (의존성 없음). /api/token 도 Vercel 과 똑같이 동작합니다.
+//   GOOGLE_SERVICE_ACCOUNT="$(cat service-account.json)" node scripts/serve.mjs
+//   또는 GOOGLE_API_KEY=AIza... node scripts/serve.mjs
 // → http://localhost:5173
 import { createServer } from "node:http";
+import { createRequire } from "node:module";
 import { readFile, stat } from "node:fs/promises";
 import { extname, join, normalize, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
+const tokenHandler = createRequire(import.meta.url)("../api/token.js");
 const port = Number(process.env.PORT) || 5173;
 const types = {
   ".html": "text/html; charset=utf-8",
@@ -21,9 +24,8 @@ const types = {
 
 createServer(async (req, res) => {
   const url = new URL(req.url, "http://localhost");
-  if (url.pathname === "/api/config") {
-    res.writeHead(200, { "Content-Type": types[".json"], "Cache-Control": "no-store" });
-    res.end(JSON.stringify({ googleApiKey: process.env.GOOGLE_API_KEY || "" }));
+  if (url.pathname === "/api/token") {
+    await tokenHandler(req, res);
     return;
   }
   let path = normalize(decodeURIComponent(url.pathname)).replace(/^([/\\])+/, "");
@@ -43,5 +45,7 @@ createServer(async (req, res) => {
   }
 }).listen(port, () => {
   console.log(`CNATION 만화: http://localhost:${port}`);
-  if (!process.env.GOOGLE_API_KEY) console.log("GOOGLE_API_KEY 가 없으면 앱의 'API 키 설정' 화면에서 입력하세요.");
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT && !process.env.GOOGLE_API_KEY) {
+    console.log("GOOGLE_SERVICE_ACCOUNT / GOOGLE_API_KEY 가 없으면 앱의 설정 화면에서 API 키를 입력하세요.");
+  }
 });

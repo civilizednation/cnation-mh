@@ -1,7 +1,8 @@
 // 만화 뷰어: 한 페이지 / 두 페이지 / 반쪽 보기 / 세로 스크롤
 
 import * as store from "./store.js";
-import { openVolume, thumbnailUrl } from "./drive.js";
+import { openVolume, prefetchVolume, thumbnailUrl } from "./drive.js";
+import * as pageCache from "./cache.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -81,6 +82,7 @@ export class Reader {
     this.el.spread.replaceChildren();
     this.el.scrollList.replaceChildren();
     this.scrollBuiltFor = null;
+    this.prefetchedNext = false;
     this.el.pageLabel.textContent = "- / -";
     this.el.slider.value = "1";
     this.updateVolumeButtons();
@@ -519,6 +521,16 @@ export class Reader {
       if (last + i < count) this.source.load(last + i).catch(() => {});
     }
     if (this.pos.page > 0) this.source.load(this.pos.page - 1).catch(() => {});
+    this.maybePrefetchNextVolume(last);
+  }
+
+  // 권 끝에 가까워지면 다음 권 목록과 앞 페이지를 미리 받아 둠
+  maybePrefetchNextVolume(lastVisible) {
+    if (this.prefetchedNext || lastVisible < this.source.count - 6) return;
+    const nextVolume = this.volumes[this.volumeIndex() + 1];
+    if (!nextVolume) return;
+    this.prefetchedNext = true;
+    prefetchVolume(nextVolume, { quality: this.settings.quality }).catch(() => {});
   }
 
   updateVolumeButtons() {
@@ -622,7 +634,13 @@ export class Reader {
 
   openSettings() {
     this.syncSettingsDialog();
+    this.updateCacheUsage();
     this.el.settingsDialog.showModal();
+  }
+
+  updateCacheUsage() {
+    const mb = pageCache.usageBytes() / 1048576;
+    $("#cache-usage").textContent = `이 기기에 저장된 페이지: ${mb < 1 ? mb.toFixed(1) : Math.round(mb)}MB (최대 800MB, 오래 안 본 것부터 자동 정리)`;
   }
 
   /* 페이지 목록 */
@@ -790,6 +808,12 @@ export class Reader {
     $("#end-list").addEventListener("click", () => {
       this.el.endDialog.close();
       this.onBack(this.work);
+    });
+
+    $("#cache-clear").addEventListener("click", async () => {
+      await pageCache.clearAll();
+      this.updateCacheUsage();
+      this.toast("저장된 페이지를 지웠습니다");
     });
 
     this.el.settingsDialog.querySelectorAll(".segmented").forEach((group) => {
