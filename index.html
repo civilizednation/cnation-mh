@@ -24,10 +24,14 @@
     <header class="topbar">
       <div class="brand">
         <span class="brand-badge">CNATION</span>
-        <h1>만화 서재</h1>
+        <h1>만화책방</h1>
+        <span class="brand-version">
+          <span>version <span data-app-version></span></span>
+          <a class="rev-link" href="#/history">rev. history</a>
+        </span>
       </div>
       <div class="topbar-actions">
-        <button class="icon-btn" id="library-settings" type="button" aria-label="API 키 설정" title="API 키 설정">
+        <button class="icon-btn" id="library-settings" type="button" aria-label="설정" title="설정">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
         </button>
       </div>
@@ -108,6 +112,105 @@
       </div>
       <button class="text-btn" id="next-volume" type="button">다음 권</button>
     </footer>
+  </section>
+
+  <!-- 설정 -->
+  <section class="screen" id="settings-screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="settings-back" type="button" aria-label="서재로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="topbar-title">설정</h1>
+    </header>
+    <main class="page-body narrow">
+      <div class="about-card">
+        <h2>cnation 만화책방</h2>
+        <dl class="about-list">
+          <div><dt>제작자</dt><dd data-app-author></dd></div>
+          <div><dt>이메일</dt><dd><a data-app-email></a></dd></div>
+          <div><dt>버전</dt><dd><span data-app-version></span> <a class="rev-link" href="#/history">rev. history</a></dd></div>
+        </dl>
+      </div>
+
+      <div class="settings-panel" id="app-settings">
+        <h2 class="section-title">보기 설정</h2>
+        <p class="setting-hint settings-lead">여기서 바꾼 설정은 만화를 볼 때 그대로 적용되고, 보는 중에 바꾼 설정도 여기에 반영됩니다. (이 기기에 저장)</p>
+        <div class="setting-group">
+          <h3>보기 방식</h3>
+          <div class="segmented" data-setting="mode">
+            <button type="button" data-value="single">한 페이지<small>1</small></button>
+            <button type="button" data-value="double">두 페이지<small>2</small></button>
+            <button type="button" data-value="split">반쪽 보기<small>3</small></button>
+            <button type="button" data-value="scroll">세로 스크롤<small>4</small></button>
+          </div>
+          <p class="setting-hint" data-mode-hint></p>
+        </div>
+        <div class="setting-group">
+          <h3>읽기 방향</h3>
+          <div class="segmented" data-setting="direction">
+            <button type="button" data-value="rtl">오른쪽 → 왼쪽 (만화)</button>
+            <button type="button" data-value="ltr">왼쪽 → 오른쪽</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h3>화면 맞춤</h3>
+          <div class="segmented" data-setting="fit">
+            <button type="button" data-value="contain">화면에 맞춤</button>
+            <button type="button" data-value="width">너비에 맞춤</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h3>반쪽 보기 대상 <small>(반쪽 보기일 때)</small></h3>
+          <div class="segmented" data-setting="splitRule">
+            <button type="button" data-value="wide">가로로 긴 이미지만</button>
+            <button type="button" data-value="all">모든 이미지</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h3>두 페이지 보기 <small>(두 페이지 보기일 때)</small></h3>
+          <div class="segmented" data-setting="coverAlone">
+            <button type="button" data-value="true">첫 장 따로 보기</button>
+            <button type="button" data-value="false">첫 장부터 짝 맞추기</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h3>이미지 화질 <small>(이미지 폴더 작품)</small></h3>
+          <div class="segmented" data-setting="quality">
+            <button type="button" data-value="normal">보통</button>
+            <button type="button" data-value="high">고화질</button>
+            <button type="button" data-value="original">원본</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h3>저장 공간</h3>
+          <p class="setting-hint" data-cache-usage></p>
+          <div class="key-actions">
+            <button class="text-btn" id="settings-cache-clear" type="button">저장된 페이지 지우기</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h3>초기화</h3>
+          <div class="key-actions">
+            <button class="text-btn" id="settings-reset" type="button">보기 설정 기본값으로</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="settings-foot"><a href="#/setup">Google Drive 연결 상태</a></p>
+    </main>
+  </section>
+
+  <!-- 변경 이력 -->
+  <section class="screen" id="history-screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="history-back" type="button" aria-label="뒤로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="topbar-title">rev. history</h1>
+    </header>
+    <main class="page-body narrow">
+      <div class="history-list" id="history-list"></div>
+    </main>
   </section>
 
   <!-- API 키 설정 -->

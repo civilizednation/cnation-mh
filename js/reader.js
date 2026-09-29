@@ -14,7 +14,7 @@ const MODE_NAMES = {
   scroll: "세로 스크롤",
 };
 
-const MODE_HINTS = {
+export const MODE_HINTS = {
   single: "이미지 한 장을 화면에 맞춰 보여 줍니다.",
   double: "두 장을 나란히 펼쳐 보여 줍니다. 가로 화면의 태블릿·PC에 알맞습니다.",
   split: "두 페이지가 한 장으로 스캔된 이미지를 반으로 잘라 한 쪽씩 보여 줍니다. 세로로 든 휴대폰·태블릿에 알맞습니다.",
@@ -74,6 +74,9 @@ export class Reader {
   async open(work, volumes, volume, start) {
     const token = ++this.openToken;
     this.closeSource();
+    // 설정 화면에서 바꾼 값 반영
+    this.settings = store.getSettings();
+    this.el.slider.classList.toggle("is-rtl", this.settings.direction === "rtl");
     this.work = work;
     this.volumes = volumes;
     this.volume = volume;
@@ -651,6 +654,7 @@ export class Reader {
   }
 
   openSettings() {
+    this.settings = store.getSettings();
     this.syncSettingsDialog();
     this.syncCoverPanel();
     this.updateCacheUsage();

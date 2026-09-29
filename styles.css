@@ -1131,3 +1131,150 @@ dialog.sheet::backdrop {
     padding: 0 9px;
   }
 }
+
+/* 서재 상단: 버전 표시 */
+
+.brand {
+  flex-wrap: wrap;
+  row-gap: 2px;
+  min-width: 0;
+}
+
+.brand-version {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-left: 10px;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.rev-link {
+  color: var(--accent-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 380px) {
+  .brand-version {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+
+/* 설정 화면 */
+
+.about-card {
+  margin: 8px 0 6px;
+  padding: 18px 18px 14px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.about-card h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+  letter-spacing: -0.3px;
+}
+
+.about-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.about-list div {
+  display: flex;
+  gap: 12px;
+}
+
+.about-list dt {
+  flex: 0 0 48px;
+  color: var(--muted);
+}
+
+.about-list dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.about-list dd a[data-app-email] {
+  color: inherit;
+}
+
+.settings-panel .setting-group {
+  padding: 12px 0 4px;
+}
+
+.setting-group h3 small {
+  font-weight: 500;
+}
+
+.settings-lead {
+  margin-top: -4px;
+}
+
+.settings-foot {
+  margin: 28px 0 0;
+  font-size: 13px;
+  text-align: center;
+}
+
+.settings-foot a {
+  color: var(--muted);
+  text-decoration: underline;
+}
+
+/* 변경 이력 */
+
+.history-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 8px;
+}
+
+.history-item {
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.history-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.history-head strong {
+  font-size: 17px;
+}
+
+.history-head span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.history-title {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.history-item ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  line-height: 1.65;
+  font-size: 14px;
+  color: #d6d7dc;
+}
+
+.history-item li + li {
+  margin-top: 4px;
+}

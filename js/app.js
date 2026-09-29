@@ -1,8 +1,10 @@
-// 화면 전환(서재 → 권 선택 → 뷰어), 책갈피 목록, API 키 설정
+// 화면 전환(서재 → 권 선택 → 뷰어), 책갈피 목록, 설정, 변경 이력, API 키 설정
 
 import * as store from "./store.js";
 import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnailUrl, collator } from "./drive.js";
-import { Reader } from "./reader.js";
+import { Reader, MODE_HINTS } from "./reader.js";
+import * as pageCache from "./cache.js";
+import { APP_VERSION, APP_AUTHOR, APP_EMAIL, HISTORY } from "./version.js";
 import { configKey, resolveConfigCover } from "./covers.js";
 
 const $ = (selector) => document.querySelector(selector);
@@ -365,6 +367,53 @@ function openBookmarks(work) {
   dialog.showModal();
 }
 
+/* 설정 (서재 오른쪽 위 톱니바퀴) */
+
+function syncAppSettings() {
+  const settings = store.getSettings();
+  const panel = $("#app-settings");
+  panel.querySelectorAll(".segmented").forEach((group) => {
+    const current = String(settings[group.dataset.setting]);
+    group.querySelectorAll("button").forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.value === current);
+      button.setAttribute("aria-pressed", String(button.dataset.value === current));
+    });
+  });
+  panel.querySelector("[data-mode-hint]").textContent = MODE_HINTS[settings.mode];
+  const mb = pageCache.usageBytes() / 1048576;
+  panel.querySelector("[data-cache-usage]").textContent =
+    `이 기기에 저장된 페이지: ${mb < 1 ? mb.toFixed(1) : Math.round(mb)}MB (최대 800MB, 오래 안 본 것부터 자동 정리)`;
+}
+
+function renderSettings() {
+  showScreen("settings-screen");
+  document.title = "설정 · cnation 만화책";
+  syncAppSettings();
+}
+
+/* 변경 이력 */
+
+function renderHistory() {
+  showScreen("history-screen");
+  document.title = "rev. history · cnation 만화책";
+  $("#history-list").replaceChildren(
+    ...HISTORY.map((entry) =>
+      h(
+        "article",
+        { class: "history-item" },
+        h(
+          "header",
+          { class: "history-head" },
+          h("strong", {}, `version ${entry.version}`),
+          h("span", {}, entry.date),
+        ),
+        entry.title ? h("p", { class: "history-title" }, entry.title) : null,
+        h("ul", {}, entry.changes.map((change) => h("li", {}, change))),
+      ),
+    ),
+  );
+}
+
 /* Drive 연결 설정 */
 
 function renderSetup(message = "") {
@@ -445,6 +494,8 @@ function route() {
   const { parts, params } = parseHash();
   if (parts[0] !== "r" && reader.active) reader.close();
   if (parts[0] === "setup") return renderSetup();
+  if (parts[0] === "settings") return renderSettings();
+  if (parts[0] === "history") return renderHistory();
   if (!hasAuth()) return renderSetup(getAuthProblem() || "Google Drive 연결 정보가 없습니다.");
   switch (parts[0]) {
     case "w":
@@ -466,7 +517,32 @@ function bindGlobalEvents() {
     });
   });
 
-  $("#library-settings").addEventListener("click", () => (location.hash = "#/setup"));
+  $("#library-settings").addEventListener("click", () => (location.hash = "#/settings"));
+  $("#settings-back").addEventListener("click", () => (location.hash = "#/"));
+  $("#history-back").addEventListener("click", () => {
+    if (history.length > 1) history.back();
+    else location.hash = "#/";
+  });
+  $("#app-settings").querySelectorAll(".segmented").forEach((group) => {
+    group.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-value]");
+      if (!button) return;
+      let value = button.dataset.value;
+      if (value === "true" || value === "false") value = value === "true";
+      store.updateSettings({ [group.dataset.setting]: value });
+      syncAppSettings();
+    });
+  });
+  $("#settings-cache-clear").addEventListener("click", async () => {
+    await pageCache.clearAll();
+    syncAppSettings();
+    toast("저장된 페이지를 지웠습니다");
+  });
+  $("#settings-reset").addEventListener("click", () => {
+    store.updateSettings(store.DEFAULT_SETTINGS);
+    syncAppSettings();
+    toast("보기 설정을 기본값으로 되돌렸습니다");
+  });
   $("#setup-retry").addEventListener("click", async () => {
     await resolveAuth();
     state.volumes.clear();
@@ -521,7 +597,17 @@ function bindGlobalEvents() {
   });
 }
 
+function fillAppInfo() {
+  document.querySelectorAll("[data-app-version]").forEach((el) => (el.textContent = APP_VERSION));
+  document.querySelectorAll("[data-app-author]").forEach((el) => (el.textContent = APP_AUTHOR));
+  document.querySelectorAll("[data-app-email]").forEach((el) => {
+    el.textContent = APP_EMAIL;
+    el.href = `mailto:${APP_EMAIL}`;
+  });
+}
+
 async function init() {
+  fillAppInfo();
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     navigator.serviceWorker.register("./service-worker.js").catch(() => {});
   }
