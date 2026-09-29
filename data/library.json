@@ -1,0 +1,46 @@
+{
+  "title": "CNATION 만화",
+  "works": [
+    {
+      "id": "slamdunk",
+      "title": "슬램덩크",
+      "folderId": "0B_Fq1xsSZuWIeUhJQ2NTM2NuTEU",
+      "resourceKey": "0-iyPAtm8AlJzULx7aKa7feg",
+      "direction": "rtl",
+      "color": "#c62828",
+      "cover": { "id": "0B_Fq1xsSZuWIUTAzWldYOFZsWFE", "resourceKey": "0-c0q7a7i7Dl__5K5L2tjndg" }
+    },
+    {
+      "id": "dragonball",
+      "title": "드래곤볼",
+      "subtitle": "01-42 완결",
+      "folderId": "16cBxUiOyOAQALRoJ60-0tcZsTAdrgzcH",
+      "direction": "rtl",
+      "color": "#ef6c00"
+    },
+    {
+      "id": "battle-royale",
+      "title": "배틀로얄",
+      "subtitle": "01-15 완결",
+      "folderId": "19QKkeblNo5ymohzsiSWmiH9drWEOLBCD",
+      "direction": "rtl",
+      "color": "#37474f"
+    },
+    {
+      "id": "kungfu-boy",
+      "title": "쿵후보이 친미 Legends",
+      "folderId": "1D5vW1DXSe4a8umrrEOHqL5Q0AhiKpaAk",
+      "direction": "rtl",
+      "color": "#2e7d32"
+    },
+    {
+      "id": "fist-of-the-north-star",
+      "title": "북두의 권",
+      "subtitle": "애장판",
+      "folderId": "0B_Fq1xsSZuWIV0RBa0M2UWh6U1k",
+      "resourceKey": "0-ZxI2cTGsZmv1VkQO5ccUfw",
+      "direction": "rtl",
+      "color": "#4527a0"
+    }
+  ]
+}

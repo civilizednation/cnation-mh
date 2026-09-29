@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121316">
+  <meta name="description" content="Google Drive 에 있는 만화책을 골라 읽는 CNATION 만화책 뷰어">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CNATION 만화">
+  <title>CNATION 만화</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./config.js"></script>
+  <script type="module" src="./js/app.js"></script>
+</head>
+<body>
+  <!-- 서재: 작품 선택 -->
+  <section class="screen" id="library-screen" hidden>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-badge">CNATION</span>
+        <h1>만화 서재</h1>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="library-settings" type="button" aria-label="API 키 설정" title="API 키 설정">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+        </button>
+      </div>
+    </header>
+    <main class="page-body">
+      <div id="continue-panel"></div>
+      <h2 class="section-title">전체 작품</h2>
+      <div class="work-grid" id="work-grid"></div>
+    </main>
+  </section>
+
+  <!-- 작품: 권 선택 -->
+  <section class="screen" id="work-screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="work-back" type="button" aria-label="서재로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="topbar-title" id="work-title"></h1>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="work-bookmarks" type="button" aria-label="책갈피 목록" title="책갈피 목록">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
+        </button>
+        <button class="icon-btn" id="work-refresh" type="button" aria-label="권 목록 새로고침" title="권 목록 새로고침">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+        </button>
+      </div>
+    </header>
+    <main class="page-body">
+      <div class="work-hero" id="work-hero"></div>
+      <h2 class="section-title">권 선택 <span class="section-meta" id="volume-count"></span></h2>
+      <div class="volume-grid" id="volume-grid"></div>
+    </main>
+  </section>
+
+  <!-- 뷰어 -->
+  <section class="screen reader" id="reader-screen" hidden>
+    <header class="reader-bar reader-top" id="reader-top">
+      <button class="icon-btn" id="reader-back" type="button" aria-label="권 목록으로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="reader-title">
+        <strong id="reader-work"></strong>
+        <span id="reader-volume"></span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="reader-bookmark" type="button" aria-label="현재 페이지 책갈피" title="책갈피 (B)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2Z"/></svg>
+        </button>
+        <button class="icon-btn" id="reader-bookmarks" type="button" aria-label="책갈피 목록" title="책갈피 목록">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        </button>
+        <button class="icon-btn" id="reader-toc" type="button" aria-label="페이지 목록" title="페이지 목록 (T)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        </button>
+        <button class="icon-btn" id="reader-settings" type="button" aria-label="보기 설정" title="보기 설정">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+        </button>
+        <button class="icon-btn" id="reader-fullscreen" type="button" aria-label="전체 화면" title="전체 화면 (F)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage">
+      <div class="spread" id="spread"></div>
+      <div class="scroll-list" id="scroll-list" hidden></div>
+      <div class="stage-status" id="stage-status" hidden>
+        <div class="spinner"></div>
+        <p id="stage-status-text">불러오는 중…</p>
+      </div>
+    </main>
+
+    <footer class="reader-bar reader-bottom" id="reader-bottom">
+      <button class="text-btn" id="prev-volume" type="button">이전 권</button>
+      <div class="slider-wrap">
+        <input type="range" id="page-slider" min="1" max="1" value="1" aria-label="페이지 이동">
+        <span class="page-label" id="page-label">- / -</span>
+      </div>
+      <button class="text-btn" id="next-volume" type="button">다음 권</button>
+    </footer>
+  </section>
+
+  <!-- API 키 설정 -->
+  <section class="screen" id="setup-screen" hidden>
+    <header class="topbar">
+      <button class="icon-btn" id="setup-back" type="button" aria-label="서재로">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h1 class="topbar-title">Google Drive 연결 설정</h1>
+    </header>
+    <main class="page-body narrow">
+      <p class="lead">만화 이미지를 Google Drive 에서 불러오려면 <strong>Google Drive API 키</strong>가 필요합니다.</p>
+      <ol class="steps">
+        <li><a href="https://console.cloud.google.com/apis/library/drive.googleapis.com" target="_blank" rel="noopener">Google Cloud 콘솔</a>에서 프로젝트를 만들고 <b>Google Drive API</b> 를 사용 설정합니다.</li>
+        <li><b>API 및 서비스 → 사용자 인증 정보 → API 키 만들기</b>를 누릅니다.</li>
+        <li>키 제한에서 <b>API 제한: Google Drive API</b>, <b>웹사이트 제한: 이 앱 주소</b>를 지정합니다.</li>
+        <li>Vercel 에서는 환경 변수 <code>GOOGLE_API_KEY</code> 로 넣거나, 아래에 입력하면 이 기기에만 저장됩니다.</li>
+      </ol>
+      <form class="key-form" id="key-form">
+        <label for="key-input">API 키</label>
+        <input id="key-input" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…">
+        <div class="key-actions">
+          <button class="primary-btn" type="submit">저장하고 연결</button>
+          <button class="text-btn" id="key-clear" type="button">이 기기에서 지우기</button>
+        </div>
+        <p class="key-note" id="key-note"></p>
+      </form>
+    </main>
+  </section>
+
+  <!-- 책갈피 목록 -->
+  <dialog class="sheet" id="bookmarks-dialog">
+    <div class="sheet-head">
+      <h2>책갈피</h2>
+      <button class="icon-btn" type="button" data-close aria-label="닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <ul class="bookmark-list" id="bookmark-list"></ul>
+  </dialog>
+
+  <!-- 보기 설정 -->
+  <dialog class="sheet" id="settings-dialog">
+    <div class="sheet-head">
+      <h2>보기 설정</h2>
+      <button class="icon-btn" type="button" data-close aria-label="닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="setting-group">
+      <h3>보기 방식</h3>
+      <div class="segmented" data-setting="mode">
+        <button type="button" data-value="single">한 페이지<small>1</small></button>
+        <button type="button" data-value="double">두 페이지<small>2</small></button>
+        <button type="button" data-value="split">반쪽 보기<small>3</small></button>
+        <button type="button" data-value="scroll">세로 스크롤<small>4</small></button>
+      </div>
+      <p class="setting-hint" id="mode-hint"></p>
+    </div>
+    <div class="setting-group">
+      <h3>읽기 방향</h3>
+      <div class="segmented" data-setting="direction">
+        <button type="button" data-value="rtl">오른쪽 → 왼쪽 (만화)</button>
+        <button type="button" data-value="ltr">왼쪽 → 오른쪽</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <h3>화면 맞춤</h3>
+      <div class="segmented" data-setting="fit">
+        <button type="button" data-value="contain">화면에 맞춤</button>
+        <button type="button" data-value="width">너비에 맞춤</button>
+      </div>
+    </div>
+    <div class="setting-group" data-only="split">
+      <h3>반쪽 보기 대상</h3>
+      <div class="segmented" data-setting="splitRule">
+        <button type="button" data-value="wide">가로로 긴 이미지만</button>
+        <button type="button" data-value="all">모든 이미지</button>
+      </div>
+    </div>
+    <div class="setting-group" data-only="double">
+      <h3>두 페이지 보기</h3>
+      <div class="segmented" data-setting="coverAlone">
+        <button type="button" data-value="true">첫 장 따로 보기</button>
+        <button type="button" data-value="false">첫 장부터 짝 맞추기</button>
+      </div>
+    </div>
+    <div class="setting-group">
+      <h3>이미지 화질 <small>(이미지 폴더 작품)</small></h3>
+      <div class="segmented" data-setting="quality">
+        <button type="button" data-value="normal">보통</button>
+        <button type="button" data-value="high">고화질</button>
+        <button type="button" data-value="original">원본</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- 페이지 목록(썸네일) -->
+  <dialog class="sheet toc" id="toc-dialog">
+    <div class="sheet-head">
+      <h2 id="toc-title">페이지 목록</h2>
+      <button class="icon-btn" type="button" data-close aria-label="닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="toc-grid" id="toc-grid"></div>
+  </dialog>
+
+  <!-- 권 끝 -->
+  <dialog class="sheet end-sheet" id="end-dialog">
+    <h2 id="end-title">다 읽었습니다</h2>
+    <p id="end-text"></p>
+    <div class="end-actions">
+      <button class="primary-btn" id="end-next" type="button">다음 권 읽기</button>
+      <button class="text-btn" id="end-list" type="button">권 목록으로</button>
+      <button class="text-btn" type="button" data-close>계속 보기</button>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
