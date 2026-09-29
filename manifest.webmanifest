@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "CNATION 만화",
-  "short_name": "CNATION 만화",
+  "name": "cnation 만화책",
+  "short_name": "cnation 만화책",
   "description": "Google Drive 에 있는 만화책을 골라 읽는 만화책 뷰어",
   "lang": "ko-KR",
   "start_url": "./",
@@ -13,7 +13,9 @@
   "theme_color": "#121316",
   "categories": ["books", "entertainment"],
   "icons": [
-    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "./icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
