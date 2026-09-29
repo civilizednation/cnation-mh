@@ -991,7 +991,7 @@ dialog.sheet::backdrop {
   margin-top: 10px;
 }
 
-.cover-spec code {
+.cover-spec #cover-spec-code {
   display: block;
   padding: 10px 12px;
   border-radius: 8px;
@@ -1001,6 +1001,12 @@ dialog.sheet::backdrop {
   user-select: all;
   -webkit-user-select: all;
   word-break: break-all;
+}
+
+.cover-spec .setting-hint code {
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: var(--bg);
 }
 
 .cover-spec .text-btn {
