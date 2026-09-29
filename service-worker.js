@@ -1,6 +1,6 @@
 // 앱 화면(HTML/CSS/JS)만 캐시합니다. Google Drive 의 만화 이미지는 캐시하지 않습니다.
 // 항상 네트워크를 먼저 쓰고, 연결이 끊겼을 때만 캐시로 화면을 띄웁니다.
-const CACHE = "cnation-mh-shell-v8";
+const CACHE = "cnation-mh-shell-v9";
 const SHELL = [
   "./",
   "./index.html",
@@ -13,6 +13,7 @@ const SHELL = [
   "./js/store.js",
   "./js/cache.js",
   "./js/covers.js",
+  "./js/version.js",
   "./data/library.json",
   "./favicon.ico",
   "./icons/favicon-32.png",
