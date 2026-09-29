@@ -196,16 +196,52 @@ export function removeBookmark(workId, key) {
   );
 }
 
-/* 표지 캐시 */
+/* 표지(대표 이미지)
+ * 저장 형태: { [workId]: { user?, config?, folder?, auto? } }  각 값은 { url, position?, key? }
+ *   user   이 기기에서 "지금 장면을 대표 이미지로" 지정한 것
+ *   config library.json 의 cover(권·쪽) 로 만든 이미지 (key 가 바뀌면 다시 만듦)
+ *   folder 작품 폴더의 cover.jpg
+ *   auto   1권 첫 장
+ */
 
-export function getCachedCover(workId) {
-  return load(KEYS.covers, {})[workId] || null;
+const COVER_ORDER = ["user", "config", "folder", "auto"];
+
+function allCovers() {
+  const raw = load(KEYS.covers, {});
+  for (const [id, value] of Object.entries(raw)) {
+    // 예전 버전은 URL 문자열만 저장
+    if (typeof value === "string") raw[id] = { auto: { url: value } };
+  }
+  return raw;
 }
 
-export function setCachedCover(workId, dataUrl) {
-  const all = load(KEYS.covers, {});
-  all[workId] = dataUrl;
+export function getCoverSlots(workId) {
+  return allCovers()[workId] || {};
+}
+
+export function setCoverSlot(workId, slot, value) {
+  const all = allCovers();
+  all[workId] = { ...all[workId], [slot]: value };
   save(KEYS.covers, all);
+}
+
+export function clearCoverSlot(workId, slot) {
+  const all = allCovers();
+  if (!all[workId]) return;
+  delete all[workId][slot];
+  save(KEYS.covers, all);
+}
+
+// configKey: library.json 의 cover 지정값(문자열). 다르면 config 슬롯은 무시
+export function pickCover(workId, configKey) {
+  const slots = getCoverSlots(workId);
+  for (const slot of COVER_ORDER) {
+    const value = slots[slot];
+    if (!value) continue;
+    if (slot === "config" && value.key !== configKey) continue;
+    return { slot, ...value };
+  }
+  return null;
 }
 
 /* 권 목록 캐시 (Drive API 호출 줄이기) */

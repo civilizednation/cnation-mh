@@ -3,6 +3,7 @@
 import * as store from "./store.js";
 import { openVolume, prefetchVolume, thumbnailUrl } from "./drive.js";
 import * as pageCache from "./cache.js";
+import { snapshot } from "./covers.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -561,31 +562,48 @@ export class Reader {
     }
   }
 
-  // 표지가 없는 작품은 처음 연 권의 첫 장으로 표지 만들기
+  // 대표 이미지가 따로 없는 작품은 1권 첫 장을 기억 (다른 권 첫 장은 쓰지 않음)
   maybeSaveCover(result, index) {
-    if (index !== 0 || !result || this.work.cover || store.getCachedCover(this.work.id)) return;
+    if (index !== 0 || !result || this.work.cover || this.volume.id !== this.volumes[0]?.id) return;
+    if (store.getCoverSlots(this.work.id).auto) return;
+    snapshot(result, this.source.pages[0], null)
+      .then((cover) => store.setCoverSlot(this.work.id, "auto", cover))
+      .catch(() => {});
+  }
+
+  /* 대표 이미지 지정 */
+
+  currentCoverSpec() {
+    const index = this.volumes.findIndex((v) => v.id === this.volume.id);
+    const volume = this.volume.number ?? index + 1;
+    const spec = { volume, page: this.pos.page + 1 };
+    const frame = this.lastFrames?.find((f) => f.index === this.pos.page);
+    if (frame?.crop) spec.side = frame.crop;
+    return spec;
+  }
+
+  async useSceneAsCover() {
+    if (!this.source) return;
+    const spec = this.currentCoverSpec();
     try {
-      if (result.url.startsWith("blob:")) {
-        const img = new Image();
-        img.onload = () => {
-          const width = 320;
-          const canvas = document.createElement("canvas");
-          // 가로로 긴 표지는 오른쪽 절반(만화 표지 쪽)만 사용
-          const wide = img.naturalWidth > img.naturalHeight * 1.05;
-          const sx = wide ? img.naturalWidth / 2 : 0;
-          const sw = wide ? img.naturalWidth / 2 : img.naturalWidth;
-          canvas.width = width;
-          canvas.height = Math.round((width * img.naturalHeight) / sw);
-          canvas.getContext("2d").drawImage(img, sx, 0, sw, img.naturalHeight, 0, 0, canvas.width, canvas.height);
-          store.setCachedCover(this.work.id, canvas.toDataURL("image/jpeg", 0.72));
-        };
-        img.src = result.url;
-      } else {
-        const page = this.source.pages[0];
-        if (page?.id) store.setCachedCover(this.work.id, thumbnailUrl(page.id, page.resourceKey, 400));
-      }
-    } catch {
-      // 표지 저장 실패는 무시
+      const image = await this.source.load(this.pos.page);
+      const cover = await snapshot(image, this.source.pages[this.pos.page], spec.side || null);
+      store.setCoverSlot(this.work.id, "user", { ...cover, spec });
+      this.syncCoverPanel();
+      this.toast("이 장면을 대표 이미지로 지정했습니다");
+    } catch (error) {
+      this.toast(`대표 이미지를 만들지 못했습니다: ${error.message}`);
+    }
+  }
+
+  syncCoverPanel() {
+    const user = store.getCoverSlots(this.work?.id).user;
+    $("#cover-reset").hidden = !user;
+    const box = $("#cover-spec");
+    box.hidden = !user?.spec;
+    if (user?.spec) {
+      const side = user.spec.side ? `, "side": "${user.spec.side}"` : "";
+      $("#cover-spec-code").textContent = `"cover": { "volume": ${user.spec.volume}, "page": ${user.spec.page}${side} }`;
     }
   }
 
@@ -634,6 +652,7 @@ export class Reader {
 
   openSettings() {
     this.syncSettingsDialog();
+    this.syncCoverPanel();
     this.updateCacheUsage();
     this.el.settingsDialog.showModal();
   }
@@ -808,6 +827,21 @@ export class Reader {
     $("#end-list").addEventListener("click", () => {
       this.el.endDialog.close();
       this.onBack(this.work);
+    });
+
+    $("#cover-use").addEventListener("click", () => this.useSceneAsCover());
+    $("#cover-reset").addEventListener("click", () => {
+      store.clearCoverSlot(this.work.id, "user");
+      this.syncCoverPanel();
+      this.toast("이 기기의 대표 이미지 지정을 해제했습니다");
+    });
+    $("#cover-copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText($("#cover-spec-code").textContent);
+        this.toast("복사했습니다");
+      } catch {
+        this.toast("복사하지 못했습니다. 길게 눌러 직접 복사해 주세요.");
+      }
     });
 
     $("#cache-clear").addEventListener("click", async () => {

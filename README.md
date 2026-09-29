@@ -82,14 +82,21 @@ Node.js 18 이상만 있으면 되고 설치할 패키지는 없습니다. 서�
   "folderId": "0B_Fq1xsSZuWIeUhJQ2NTM2NuTEU",
   "resourceKey": "0-iyPAtm8AlJzULx7aKa7feg",
   "color": "#c62828",
-  "cover": { "id": "표지 이미지 파일 ID", "resourceKey": "있으면 입력" }
+  "cover": { "volume": 1, "page": 1 }
 }
 ```
 
 - `id`: 영문 식별자 (이어보기·책갈피 저장 키로 쓰이므로 한 번 정하면 바꾸지 않기)
 - `folderId`: 작품 폴더 ID (공유 링크 `.../folders/<여기>`)
 - `resourceKey`: 2021년 이전에 만든 폴더의 공유 링크에 `?resourcekey=` 가 붙어 있으면 그 값
-- `cover`, `color`, `subtitle`: 선택. 표지가 없으면 처음 읽은 권의 첫 장으로 자동 생성합니다.
+- `color`, `subtitle`: 선택
+- `cover`: 작품 대표 이미지(선택). 다음 중 하나로 지정합니다.
+  - `{ "volume": 1, "page": 5 }` — 1권 5쪽. ZIP 작품도 됩니다.
+  - `{ "volume": 1, "page": 5, "side": "right" }` — 펼친 두 페이지 이미지에서 오른쪽(또는 `"left"`) 절반만
+  - `{ "id": "Drive 이미지 파일 ID", "resourceKey": "…" }` — Drive 의 이미지 파일을 직접 지정
+
+  원하는 장면은 뷰어의 **보기 설정 → 작품 대표 이미지 → 지금 장면을 대표 이미지로** 를 누르면 그 기기에 바로 적용되고,
+  위 형식의 값이 표시되므로 복사해서 넣으면 됩니다. 지정이 없으면 작품 폴더의 `cover.jpg` → 1권 첫 장 순서로 씁니다.
 
 작품 폴더 구성은 다음 중 어느 형태든 됩니다.
 

@@ -203,6 +203,18 @@
       </div>
     </div>
     <div class="setting-group">
+      <h3>작품 대표 이미지</h3>
+      <div class="key-actions">
+        <button class="text-btn" id="cover-use" type="button">지금 장면을 대표 이미지로</button>
+        <button class="text-btn" id="cover-reset" type="button" hidden>지정 해제</button>
+      </div>
+      <div class="cover-spec" id="cover-spec" hidden>
+        <p class="setting-hint">이 기기에 바로 적용됩니다. 모든 기기에 고정하려면 아래 값을 <code>data/library.json</code> 의 이 작품 항목에 넣으세요.</p>
+        <code id="cover-spec-code"></code>
+        <button class="text-btn" id="cover-copy" type="button">복사</button>
+      </div>
+    </div>
+    <div class="setting-group">
       <h3>저장 공간</h3>
       <p class="setting-hint" id="cache-usage"></p>
       <div class="key-actions">
