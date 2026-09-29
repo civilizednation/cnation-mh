@@ -1,5 +1,5 @@
 {
-  "title": "CNATION 만화",
+  "title": "cnation 만화책방",
   "works": [
     {
       "id": "slamdunk",
@@ -40,6 +40,160 @@
       "resourceKey": "0-ZxI2cTGsZmv1VkQO5ccUfw",
       "direction": "rtl",
       "color": "#4527a0"
+    },
+    {
+      "id": "20th-century-boys",
+      "title": "20세기소년",
+      "folderId": "1yTFkMmQvUP5LUXrQtU5mvny7RHEFj1OE",
+      "direction": "rtl",
+      "color": "#c62828"
+    },
+    {
+      "id": "h2",
+      "title": "H2",
+      "folderId": "1yhdxsKAcO-A16JkwFv5BLTwuHDomSq5Y",
+      "direction": "rtl",
+      "color": "#ad1457"
+    },
+    {
+      "id": "hikaru-no-go",
+      "title": "고스트 바둑왕",
+      "folderId": "1NjqMbKzYV1aulBzUn15L9ZJT_KLxM1ds",
+      "direction": "rtl",
+      "color": "#6a1b9a"
+    },
+    {
+      "id": "parasyte",
+      "title": "기생수",
+      "folderId": "1unv0XaudS9ZZK24D7Vc2J3UoQCQxfCWE",
+      "direction": "rtl",
+      "color": "#4527a0"
+    },
+    {
+      "id": "naruto",
+      "title": "나루토",
+      "folderId": "1qDaxN1wUKwjzTSE57Be4VqGjreOmLte8",
+      "direction": "rtl",
+      "color": "#283593"
+    },
+    {
+      "id": "death-note",
+      "title": "데스노트",
+      "folderId": "1dRyIu5s7Z3tApF_rEdaCFS_tiYn4_Cye",
+      "direction": "rtl",
+      "color": "#1565c0"
+    },
+    {
+      "id": "rough",
+      "title": "러프",
+      "folderId": "1SmtkJe75qcwsx3-eClggeWPov18CZaiK",
+      "direction": "rtl",
+      "color": "#00838f"
+    },
+    {
+      "id": "monster",
+      "title": "몬스터",
+      "folderId": "1nmfxLE_ArD8vhKE5FXUEIS2b7OFFSyCz",
+      "direction": "rtl",
+      "color": "#00695c"
+    },
+    {
+      "id": "misora",
+      "title": "미소라",
+      "folderId": "1XzxtTkfSS8x6si67UDyj3_HIYoIsjQ45",
+      "direction": "rtl",
+      "color": "#2e7d32"
+    },
+    {
+      "id": "sushi-king",
+      "title": "미스터 초밥왕",
+      "folderId": "1zsp9xjRSEGB-eEGkLnknHBCzg2S1DSz8",
+      "direction": "rtl",
+      "color": "#558b2f"
+    },
+    {
+      "id": "miyuki",
+      "title": "미유키",
+      "folderId": "1MfSy6Yn7fYYJYeNYBWrmxCivwM4PEj51",
+      "direction": "rtl",
+      "color": "#9e9d24"
+    },
+    {
+      "id": "rurouni-kenshin",
+      "title": "바람의 검심",
+      "folderId": "1ofIbLNSPmYjYZLHmq6HfWTOgb6zx5FVH",
+      "direction": "rtl",
+      "color": "#f9a825"
+    },
+    {
+      "id": "along-with-the-gods",
+      "title": "신과함께",
+      "folderId": "10JLdn4prBUZFeZ_b9OsQ6RKnU3_tmVx_",
+      "direction": "rtl",
+      "color": "#ef6c00"
+    },
+    {
+      "id": "inuyasha",
+      "title": "이누야샤",
+      "folderId": "1uq7fYi7gaoyTkIcNFU6tfQTn3l_Z-i0J",
+      "direction": "rtl",
+      "color": "#d84315"
+    },
+    {
+      "id": "nanairo-rainbow",
+      "title": "일곱빛깔무지개",
+      "folderId": "1XnsdGpFwEYeOaaGXnD9tIZ9V_6_BEUTl",
+      "direction": "rtl",
+      "color": "#6d4c41"
+    },
+    {
+      "id": "fist-of-the-blue-sky",
+      "title": "창천의 권",
+      "folderId": "1qRsIEtLirE-GWUshBXJtZdQEWVsoyHPP",
+      "direction": "rtl",
+      "color": "#546e7a"
+    },
+    {
+      "id": "katsu",
+      "title": "카츠",
+      "folderId": "1RTOaPpphQLs47uS4LiKEh1xceq4vb_RY",
+      "direction": "rtl",
+      "color": "#c62828"
+    },
+    {
+      "id": "kungfu-boy-chinmi",
+      "title": "쿵후보이 친미",
+      "folderId": "1YMIj3w8TZjRFdPFbaEjiTn7NYT1ohZuY",
+      "direction": "rtl",
+      "color": "#ad1457"
+    },
+    {
+      "id": "kungfu-boy-chinmi-new",
+      "title": "쿵후보이 친미(신)",
+      "folderId": "1Ki746mX1Sefo2mHMTQ-_QQmJVZzL0KmJ",
+      "direction": "rtl",
+      "color": "#6a1b9a"
+    },
+    {
+      "id": "kungfu-boy-chinmi-gaiden",
+      "title": "쿵후보이 친미 외전",
+      "folderId": "1DNSCmw-4zkgLfNh4VbYezCU2aiKA2Ege",
+      "direction": "rtl",
+      "color": "#4527a0"
+    },
+    {
+      "id": "cross-game",
+      "title": "크로스게임",
+      "folderId": "1uoMZQndtH0tGNCluWENL24jsTKJjsoPg",
+      "direction": "rtl",
+      "color": "#283593"
+    },
+    {
+      "id": "touch",
+      "title": "터치",
+      "folderId": "1Lhg7IZGCQW6LnGp5SZnha31g9J1jaZXd",
+      "direction": "rtl",
+      "color": "#1565c0"
     }
   ]
 }
