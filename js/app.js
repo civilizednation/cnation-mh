@@ -5,7 +5,7 @@ import { resolveAuth, hasAuth, getAuthProblem, listVolumes, listFolder, thumbnai
 import { Reader, MODE_HINTS } from "./reader.js";
 import * as pageCache from "./cache.js";
 import { APP_VERSION, APP_AUTHOR, APP_EMAIL, HISTORY } from "./version.js";
-import { resolveAutoCover } from "./covers.js";
+import { resolveAutoCover, makeCoverFile } from "./covers.js";
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -458,6 +458,67 @@ function renderSetup(message = "") {
   $("#key-note").textContent = "";
 }
 
+/* 관리자용: 표지 파일 만들기 */
+
+async function scanCovers() {
+  const button = $("#cover-scan");
+  const status = $("#cover-scan-status");
+  const list = $("#cover-tool-list");
+  button.disabled = true;
+  list.replaceChildren();
+  const works = state.library.works;
+  let done = 0;
+  const failed = [];
+  status.textContent = `작품 폴더 확인 중… 0 / ${works.length}`;
+  // 폴더 목록을 새로 읽어 cover 파일 유무를 확인 (3개씩)
+  const queue = [...works];
+  await Promise.all(
+    Array.from({ length: 3 }, async () => {
+      while (queue.length) {
+        const work = queue.shift();
+        try {
+          store.clearCachedVolumes(work.id);
+          await getVolumes(work, { force: true });
+        } catch {
+          failed.push(work);
+        }
+        done += 1;
+        status.textContent = `작품 폴더 확인 중… ${done} / ${works.length}`;
+      }
+    }),
+  );
+  const missing = works.filter((work) => !failed.includes(work) && !store.getCoverSlots(work.id).folder);
+  status.textContent =
+    `cover 파일 있음 ${works.length - missing.length - failed.length}개 · 없음 ${missing.length}개` +
+    (failed.length ? ` · 확인 실패 ${failed.length}개 (${failed.map((w) => w.title).join(", ")})` : "");
+  list.replaceChildren(
+    ...missing.map((work) => {
+      const note = h("small", {}, "");
+      const download = h("button", { class: "text-btn", type: "button" }, "cover.jpg 내려받기");
+      download.addEventListener("click", async () => {
+        download.disabled = true;
+        note.textContent = "1권 첫 장으로 만드는 중…";
+        try {
+          const blob = await makeCoverFile(await getVolumes(work));
+          const url = URL.createObjectURL(blob);
+          const a = h("a", { href: url, download: "cover.jpg" });
+          document.body.append(a);
+          a.click();
+          a.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+          note.textContent = `받음 (${Math.round(blob.size / 1024)}KB) → '${work.title}' 폴더에 올리세요`;
+        } catch (error) {
+          note.textContent = `만들지 못했습니다: ${error.message}`;
+        } finally {
+          download.disabled = false;
+        }
+      });
+      return h("li", { class: "cover-tool-item" }, h("div", {}, h("strong", {}, work.title), note), download);
+    }),
+  );
+  button.disabled = false;
+}
+
 /* 뷰어 */
 
 const reader = new Reader({
@@ -588,6 +649,13 @@ function bindGlobalEvents() {
     else renderSetup(getAuthProblem() || "아직 연결되지 않았습니다.");
   });
   $("#setup-back").addEventListener("click", () => (location.hash = "#/"));
+  $("#cover-scan").addEventListener("click", () => {
+    if (!hasAuth()) {
+      $("#cover-scan-status").textContent = "Google Drive 에 연결된 뒤에 사용할 수 있습니다.";
+      return;
+    }
+    scanCovers();
+  });
   $("#work-back").addEventListener("click", () => (location.hash = "#/"));
   $("#work-refresh").addEventListener("click", () => {
     const workId = $("#work-screen").dataset.workId;
