@@ -11,6 +11,14 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.5",
+    date: "2026-09-30",
+    title: "작품 목록 정리",
+    changes: [
+      "'신과함께'는 Google Drive 에 만화 파일 업로드가 끝나지 않아 작품 목록에서 잠시 뺌 (총 26개, 업로드가 끝나면 다시 추가 예정)",
+    ],
+  },
+  {
     version: "1.0.4",
     date: "2026-09-30",
     title: "관리자용 표지 파일 만들기",
