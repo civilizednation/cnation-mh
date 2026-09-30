@@ -11,6 +11,14 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.4",
+    date: "2026-09-30",
+    title: "관리자용 표지 파일 만들기",
+    changes: [
+      "Google Drive 연결 상태 화면(설정 맨 아래 링크)에 '표지 파일 만들기' 추가: 작품 폴더에 cover 파일이 없는 작품을 찾아, 1권 첫 장으로 만든 cover.jpg(가로 360px, JPEG 75%)를 내려받을 수 있음",
+    ],
+  },
+  {
     version: "1.0.3",
     date: "2026-09-30",
     title: "작품 27개로 확대",

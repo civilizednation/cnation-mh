@@ -1431,3 +1431,46 @@ kbd {
   font: 600 12px/1.5 inherit;
   text-align: center;
 }
+
+/* 관리자용: 표지 파일 만들기 */
+
+.cover-tools {
+  margin-top: 28px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.cover-tools .section-title small {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.cover-tool-list {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cover-tool-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+}
+
+.cover-tool-item div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.cover-tool-item small {
+  color: var(--muted);
+  font-size: 12px;
+}

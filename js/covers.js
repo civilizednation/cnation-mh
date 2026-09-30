@@ -58,3 +58,19 @@ export async function resolveAutoCover(work, volumes) {
     source.close();
   }
 }
+
+// 관리자용: 1권 첫 장으로 cover.jpg 파일(가로 360px, JPEG 75%) 만들기
+export async function makeCoverFile(volumes) {
+  const volume = volumes[0];
+  if (!volume) throw new Error("권이 없습니다.");
+  // 원본으로 받아야 캔버스로 잘라 파일로 만들 수 있음
+  const source = await openVolume(volume, { quality: "original" });
+  try {
+    if (!source.count) throw new Error("1권에 이미지가 없습니다.");
+    const cover = await snapshot(await source.load(0), source.pages[0]);
+    const blob = await fetch(cover.url).then((res) => res.blob());
+    return blob;
+  } finally {
+    source.close();
+  }
+}
