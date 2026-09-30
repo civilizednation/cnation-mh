@@ -11,6 +11,12 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.6",
+    date: "2026-09-30",
+    title: "서재 작품 제목 크게",
+    changes: ["서재 표지 아래 작품 제목 글자 크기를 25% 키움 (15px → 18.75px)"],
+  },
+  {
     version: "1.0.5",
     date: "2026-09-30",
     title: "작품 목록 정리",
