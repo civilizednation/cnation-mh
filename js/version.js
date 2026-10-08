@@ -11,6 +11,12 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.8",
+    date: "2026-10-09",
+    title: "작품 이름만 표시",
+    changes: ["서재·권 목록 화면에서 작품 제목 아래 붙던 부제(애장판, 01-42 완결 등)를 빼고 제목만 표시"],
+  },
+  {
     version: "1.0.7",
     date: "2026-10-08",
     title: "작품 3개 추가, 권·화 번호 인식 개선",
