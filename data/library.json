@@ -187,6 +187,30 @@
       "folderId": "1Lhg7IZGCQW6LnGp5SZnha31g9J1jaZXd",
       "direction": "rtl",
       "color": "#1565c0"
+    },
+    {
+      "id": "one-piece",
+      "title": "원피스",
+      "subtitle": "1~67권",
+      "folderId": "1p6KTszOqfeKa4o96Pf9bs3tE4fVundJ1",
+      "direction": "rtl",
+      "color": "#1565c0"
+    },
+    {
+      "id": "karate-shoukoushi",
+      "title": "공수도소공자",
+      "subtitle": "1~50권 완결",
+      "folderId": "1lFYMTKx2uvmHe4rk4KHgBRVwJFT0lFug",
+      "direction": "rtl",
+      "color": "#2e7d32"
+    },
+    {
+      "id": "one-punch-man",
+      "title": "원펀맨",
+      "subtitle": "1~28권 + 리메이크 연재분",
+      "folderId": "1pUOT0ojos-PW_M86fvFPum66oJxsHZr0",
+      "direction": "rtl",
+      "color": "#f9a825"
     }
   ]
 }

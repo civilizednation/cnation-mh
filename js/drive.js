@@ -165,22 +165,46 @@ export async function listFolder(folderId, resourceKey) {
 
 /* 권 목록 */
 
-function volumeNumber(name) {
-  const base = name.replace(/\.[^.]+$/, "");
-  const match = base.match(/(\d+)(?!.*\d)/);
-  return match ? Number(match[1]) : null;
+// 파일·폴더 이름에서 권/화 번호 읽기
+//   "원피스 01권"            → 1권
+//   "원펀맨 리메이크 203-1화" → 203-1화 (연재분은 단행본 뒤에)
+//   "… 227, 227-2화", "… 218~218-2화" → 227화, 218화
+//   "드래곤볼_42 [完]", "… 50(완)" → 괄호 안 글자는 무시하고 마지막 숫자
+//   "21세기 소년 상권"        → 번호 없음 (이름 그대로)
+function parseVolumeName(name) {
+  const base = name.replace(ARCHIVE_EXT, "").replace(/\[[^\]]*\]|\([^)]*\)/g, " ");
+  const chapter = base.match(/(\d+)(?:-(\d+))?(?:\s*[~,]\s*[\d-]+)*\s*화/);
+  if (chapter) {
+    const number = Number(chapter[1]);
+    const sub = chapter[2] ? Number(chapter[2]) : 0;
+    const mark = sub ? `${number}-${sub}` : `${number}`;
+    return { group: 2, number, sub, mark, label: `${mark}화` };
+  }
+  const volume = base.match(/(\d+)\s*권/);
+  if (volume) return volumeParts(Number(volume[1]));
+  if (/[상중하]\s*권/.test(base)) return { group: 1, number: null, sub: 0, mark: null, label: null };
+  const last = base.match(/(\d+)(?!.*\d)/);
+  return last ? volumeParts(Number(last[1])) : { group: 1, number: null, sub: 0, mark: null, label: null };
+}
+
+function volumeParts(number) {
+  return { group: 0, number, sub: 0, mark: `${number}`, label: `${number}권` };
 }
 
 function toVolume(file, kind) {
-  const number = volumeNumber(file.name);
+  const name = file.name.replace(ARCHIVE_EXT, "");
+  const { group, number, sub, mark, label } = parseVolumeName(file.name);
   return {
     id: file.id,
-    name: file.name.replace(ARCHIVE_EXT, ""),
+    name,
     resourceKey: file.resourceKey || "",
     kind,
     size: file.size ? Number(file.size) : 0,
+    group,
     number,
-    label: number !== null ? `${number}권` : file.name.replace(ARCHIVE_EXT, ""),
+    sub,
+    mark,
+    label: label || name,
   };
 }
 
@@ -205,12 +229,18 @@ export async function listVolumes(work) {
       resourceKey: work.resourceKey || "",
       kind: "folder",
       size: 0,
+      group: 1,
       number: null,
+      sub: 0,
+      mark: null,
       label: work.title,
     });
   }
+  // 단행본(권) → 번호 없는 권(상권·하권 등) → 연재분(화) 순서
   volumes.sort((a, b) => {
+    if (a.group !== b.group) return a.group - b.group;
     if (a.number !== null && b.number !== null && a.number !== b.number) return a.number - b.number;
+    if (a.sub !== b.sub) return a.sub - b.sub;
     return collator.compare(a.name, b.name);
   });
   const cover = coverFile ? { id: coverFile.id, resourceKey: coverFile.resourceKey || "" } : null;

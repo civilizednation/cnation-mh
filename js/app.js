@@ -331,7 +331,7 @@ async function renderWork(workId, { force = false } = {}) {
           href: readerHash(work.id, volume.id),
           title: volume.name,
         },
-        h("strong", { class: "volume-number" }, volume.number !== null ? volume.number : "·"),
+        h("strong", { class: "volume-number" }, volume.mark ?? (volume.number !== null ? volume.number : "·")),
         h("span", { class: "volume-name" }, /^\d+$/.test(volume.name) ? volume.label : volume.name),
         h("span", { class: "volume-meta" }, volume.kind === "zip" ? `ZIP ${formatSize(volume.size)}` : "이미지"),
         status ? h("span", { class: "volume-status" }, isLast ? `● ${status}` : status) : null,
