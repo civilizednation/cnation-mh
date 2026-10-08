@@ -8,7 +8,8 @@ const KEYS = {
   bookmarks: `${PREFIX}bookmarks.v1`,
   covers: `${PREFIX}covers.v1`,
   apiKey: `${PREFIX}api-key`,
-  volumes: (workId) => `${PREFIX}volumes.${workId}.v1`,
+  // v2: 권/화 번호 읽는 방식 변경 (예전 목록은 다시 불러옴)
+  volumes: (workId) => `${PREFIX}volumes.${workId}.v2`,
 };
 
 const VOLUME_CACHE_TTL = 12 * 60 * 60 * 1000;
