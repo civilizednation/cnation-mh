@@ -12,7 +12,6 @@
     {
       "id": "dragonball",
       "title": "드래곤볼",
-      "subtitle": "01-42 완결",
       "folderId": "16cBxUiOyOAQALRoJ60-0tcZsTAdrgzcH",
       "direction": "rtl",
       "color": "#ef6c00"
@@ -20,7 +19,6 @@
     {
       "id": "battle-royale",
       "title": "배틀로얄",
-      "subtitle": "01-15 완결",
       "folderId": "19QKkeblNo5ymohzsiSWmiH9drWEOLBCD",
       "direction": "rtl",
       "color": "#37474f"
@@ -35,7 +33,6 @@
     {
       "id": "fist-of-the-north-star",
       "title": "북두의 권",
-      "subtitle": "애장판",
       "folderId": "0B_Fq1xsSZuWIV0RBa0M2UWh6U1k",
       "resourceKey": "0-ZxI2cTGsZmv1VkQO5ccUfw",
       "direction": "rtl",
@@ -191,7 +188,6 @@
     {
       "id": "one-piece",
       "title": "원피스",
-      "subtitle": "1~67권",
       "folderId": "1p6KTszOqfeKa4o96Pf9bs3tE4fVundJ1",
       "direction": "rtl",
       "color": "#1565c0"
@@ -199,7 +195,6 @@
     {
       "id": "karate-shoukoushi",
       "title": "공수도소공자",
-      "subtitle": "1~50권 완결",
       "folderId": "1lFYMTKx2uvmHe4rk4KHgBRVwJFT0lFug",
       "direction": "rtl",
       "color": "#2e7d32"
@@ -207,7 +202,6 @@
     {
       "id": "one-punch-man",
       "title": "원펀맨",
-      "subtitle": "1~28권 + 리메이크 연재분",
       "folderId": "1pUOT0ojos-PW_M86fvFPum66oJxsHZr0",
       "direction": "rtl",
       "color": "#f9a825"

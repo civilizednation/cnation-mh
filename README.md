@@ -78,7 +78,6 @@ Node.js 18 이상만 있으면 되고 설치할 패키지는 없습니다. 서�
 {
   "id": "slamdunk",
   "title": "슬램덩크",
-  "subtitle": "완결",
   "folderId": "0B_Fq1xsSZuWIeUhJQ2NTM2NuTEU",
   "resourceKey": "0-iyPAtm8AlJzULx7aKa7feg",
   "color": "#c62828"
@@ -88,7 +87,7 @@ Node.js 18 이상만 있으면 되고 설치할 패키지는 없습니다. 서�
 - `id`: 영문 식별자 (이어보기·책갈피 저장 키로 쓰이므로 한 번 정하면 바꾸지 않기)
 - `folderId`: 작품 폴더 ID (공유 링크 `.../folders/<여기>`)
 - `resourceKey`: 2021년 이전에 만든 폴더의 공유 링크에 `?resourcekey=` 가 붙어 있으면 그 값
-- `color`, `subtitle`: 선택
+- `color`: 선택 (표지가 없을 때 쓰는 배경색)
 
 ### 작품 대표 이미지(표지)
 
