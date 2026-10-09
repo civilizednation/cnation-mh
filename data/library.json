@@ -205,6 +205,20 @@
       "folderId": "1pUOT0ojos-PW_M86fvFPum66oJxsHZr0",
       "direction": "rtl",
       "color": "#f9a825"
+    },
+    {
+      "id": "fullmetal-alchemist",
+      "title": "강철의 연금술사",
+      "folderId": "1dSr2jDkdclOaew60JG3BjXRXl4lCzsEt",
+      "direction": "rtl",
+      "color": "#6d4c41"
+    },
+    {
+      "id": "dragonball-super",
+      "title": "드래곤볼 슈퍼",
+      "folderId": "1kViFErej-chl1d1nr2wkEfcYJnaXp8Ue",
+      "direction": "rtl",
+      "color": "#ef6c00"
     }
   ]
 }

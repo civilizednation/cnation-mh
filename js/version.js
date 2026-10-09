@@ -11,6 +11,12 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.9",
+    date: "2026-10-09",
+    title: "작품 2개 추가",
+    changes: ["새 작품 2개 추가 (총 31개): 강철의 연금술사, 드래곤볼 슈퍼"],
+  },
+  {
     version: "1.0.8",
     date: "2026-10-09",
     title: "작품 이름만 표시",
