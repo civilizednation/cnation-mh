@@ -171,7 +171,13 @@ export async function listFolder(folderId, resourceKey) {
 //   "… 227, 227-2화", "… 218~218-2화" → 227화, 218화
 //   "드래곤볼_42 [完]", "… 50(완)" → 괄호 안 글자는 무시하고 마지막 숫자
 //   "21세기 소년 상권"        → 번호 없음 (이름 그대로)
+//   "24.미미의괴담 2"          → 앞 번호 24, 이름은 "미미의괴담 2" (단편집처럼 번호.제목 형식)
 function parseVolumeName(name) {
+  const leading = name.replace(ARCHIVE_EXT, "").match(/^(\d+)\.\s*(\S.*)$/);
+  if (leading) {
+    const number = Number(leading[1]);
+    return { group: 0, number, sub: 0, mark: `${number}`, label: leading[2].trim() };
+  }
   const base = name.replace(ARCHIVE_EXT, "").replace(/\[[^\]]*\]|\([^)]*\)/g, " ");
   const chapter = base.match(/(\d+)(?:-(\d+))?(?:\s*[~,]\s*[\d-]+)*\s*화/);
   if (chapter) {
