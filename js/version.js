@@ -11,6 +11,15 @@ export const APP_EMAIL = "mmk75@naver.com";
 
 export const HISTORY = [
   {
+    version: "1.0.10",
+    date: "2026-10-09",
+    title: "이토준지 공포만화 추가",
+    changes: [
+      "새 작품 추가 (총 32개): 이토준지 공포만화 (단편집 28권)",
+      "'24.미미의괴담'처럼 '번호.제목' 형식의 파일은 앞 번호 순서로 정렬하고 제목을 그대로 표시",
+    ],
+  },
+  {
     version: "1.0.9",
     date: "2026-10-09",
     title: "작품 2개 추가",
